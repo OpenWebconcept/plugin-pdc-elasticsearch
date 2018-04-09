@@ -1,0 +1,33 @@
+{
+  "name": "plugin/owc-elasticsearch",
+  "description": "OWC Elasticsearch",
+  "homepage": "https://www.yardinternet.nl",
+  "authors": [
+    {
+      "name": "Yard Internet",
+      "email": "info@yard.nl"
+    }
+  ],
+  "type": "wordpress-plugin",
+  "require": {
+  },
+  "require-dev": {
+    "mockery/mockery": "0.9.*",
+    "phpunit/phpunit": "~5.7",
+    "10up/wp_mock": "0.2.0"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "OWC\\Elasticsearch\\": "./src/Elasticsearch",
+      "OWC\\Elasticsearch\\Tests\\": "./tests"
+    }
+  },
+  "scripts": {
+    "unit": "./vendor/bin/phpunit  --testsuite 'Unit Test' --colors=always",
+    "integration": "./vendor/bin/phpunit  --testsuite 'Integration Test' --colors=always",
+    "test": [
+      "@unit",
+      "@integration"
+    ]
+  }
+}
