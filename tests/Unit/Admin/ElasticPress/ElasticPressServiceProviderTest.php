@@ -3,7 +3,6 @@
 namespace OWC\Elasticsearch\Tests\ElasticPress;
 
 use Mockery as m;
-use OWC\Elasticsearch\Admin\ElasticPress\ElasticPress;
 use OWC\Elasticsearch\Admin\ElasticPress\ElasticPressServiceProvider;
 use OWC\Elasticsearch\Config;
 use OWC\Elasticsearch\Plugin\BasePlugin;
@@ -35,7 +34,7 @@ class ElasticPressServiceProviderTest extends TestCase
 
 		$this->config = m::mock(Config::class);
 
-		$this->plugin         = m::mock(BasePlugin::class);
+		$this->plugin = m::mock(BasePlugin::class);
 		$this->plugin->config = $this->config;
 		$this->plugin->loader = m::mock(Loader::class);
 

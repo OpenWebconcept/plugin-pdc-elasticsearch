@@ -12,36 +12,52 @@ class SettingsServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
+		add_filter('owc/pdc_base/config/settings_pages', [$this, 'addTab']);
+		add_filter('owc/pdc_base/config/settings', [$this, 'addSettings']);
+	}
 
-		$this->plugin->loader->addFilter('rwmb_meta_boxes', $this, 'registerSettings', 11, 1);
-		$this->plugin->loader->addAction('admin_init', $this, 'getSettingsOption');
+	/**
+	 * @param $settings
+	 * @return array
+	 */
+	public function addTab($settings)
+	{
+		$settings['base']['tabs']['elasticsearch'] = __('Elasticsearch', '');
+		return $settings;
 	}
 
 	/**
 	 * Register metaboxes for settings page
 	 *
 	 * @param $metaboxes
-	 *
 	 * @return array
 	 */
-	public function registerSettings($metaboxes)
+	public function addSettings($metaboxes)
 	{
-
 		$configMetaboxes = [
 			'elasticsearch' => [
-				'id'             => 'elasticsearch',
-				'title'          => __('Elasticsearch instellingen', 'pdc-base'),
-				'settings_pages' => '_owc_pdc_elasticsearch_settings',
-				'fields'         => [
-					'test' => [
-						'heading'    => [
-							'type' => 'heading',
-							'name' => __('Portal', 'pdc-base'),
+				'id' => 'elasticsearch',
+				'title' => __('Elasticsearch', 'owc-elasticsearch'),
+				'settings_pages' => '_owc_pdc_base_settings',
+				'tab' => 'elasticsearch',
+				'fields' => [
+					'elasticsearch' => [
+						'url' => [
+							'id' => 'setting_elasticsearch_url',
+							'name' => __('Instance url', 'owc-elasticsearch'),
+							'desc' => __('URL inclusief http(s)://', 'owc-elasticsearch'),
+							'type' => 'text'
 						],
-						'portal_url' => [
-							'name' => __('Portal URL', 'pdc-base'),
-							'desc' => __('URL inclusief http(s)://', 'pdc-base'),
-							'id'   => 'setting_portal_url',
+						'shield' => [
+							'id' => 'setting_elasticsearch_shield',
+							'name' => __('Instance shield', 'owc-elasticsearch'),
+							'desc' => __('URL inclusief http(s)://', 'owc-elasticsearch'),
+							'type' => 'text'
+						],
+						'prefix' => [
+							'id' => 'setting_elasticsearch_prefix',
+							'name' => __('Instance prefix', 'owc-elasticsearch'),
+							'desc' => __('', 'owc-elasticsearch'),
 							'type' => 'text'
 						]
 					]
@@ -49,14 +65,7 @@ class SettingsServiceProvider extends ServiceProvider
 			]
 		];
 
-		return array_merge($metaboxes, $configMetaboxes);
-	}
-
-	/**
-	 *
-	 */
-	public function getSettingsOption()
-	{
-		$this->plugin->settings = get_option(\OWC_PDC_Base\Core\Settings\SettingsServiceProvider::PREFIX . 'pdc_elasticsearch_settings');
+		$configMetaboxes = array_merge($metaboxes, $configMetaboxes);
+		return $configMetaboxes;
 	}
 }

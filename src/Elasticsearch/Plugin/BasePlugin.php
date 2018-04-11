@@ -45,10 +45,10 @@ abstract class BasePlugin
 	{
 		$this->rootPath = $rootPath;
 
+		$this->loader = Loader::getInstance();
+
 		$this->config = new Config($this->rootPath . '/config');
 		$this->config->boot();
-
-		$this->loader = Loader::getInstance();
 
 		$this->bootServiceProviders();
 
@@ -113,7 +113,10 @@ abstract class BasePlugin
 		]);
 
 		add_action('admin_notices', function() {
-			if ( get_transient('owc-elasticsearch-plugin-actions-notice') ) { ?>
+			if ( get_transient('owc-elasticsearch-plugin-actions-notice') ) {
+
+				get_option( '')
+				?>
                 <div class="updated notice is-dismissible">
                     <p>Thank you for using this plugin! <strong>You are awesome</strong>.</p>
                 </div>
