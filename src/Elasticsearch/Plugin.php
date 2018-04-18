@@ -38,9 +38,7 @@ class Plugin extends BasePlugin
 	 */
 	public function getSettings()
 	{
-		$settings = $this->config->get('core.settings');
-
-		return apply_filters('owc/owc-elasticsearch/settings', $settings);
+		return $this->config->get('core.settings');
 	}
 
 }

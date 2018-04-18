@@ -45,38 +45,43 @@ abstract class BasePlugin
 	{
 		$this->rootPath = $rootPath;
 
-		$this->loader = Loader::getInstance();
-
 		$this->config = new Config($this->rootPath . '/config');
 		$this->config->boot();
 
-		$this->bootServiceProviders();
+		$this->loader = Loader::getInstance();
+
+		$this->bootServiceProviders('register');
 
 		$this->bootLanguages();
 
 		if ( is_network_admin() ) {
-			$network = new Network($this);
-			$network->boot();
+			$this->bootServiceProviders('register', 'network');
 		}
 
-		if ( is_admin() ) {
-			$admin = new Admin($this);
-			$admin->boot();
-		} else {
-			$frontend = new Frontend($this);
-			$frontend->boot();
+		$this->bootServiceProviders('register', is_admin() ? 'admin' : 'frontend');
+
+		$this->bootServiceProviders('boot');
+		if ( is_network_admin() ) {
+			$this->bootServiceProviders('boot', 'network');
 		}
+
+		$this->bootServiceProviders('boot', is_admin() ? 'admin' : 'frontend');
 
 		$this->loader->register();
 	}
 
 	/**
 	 * Boot service providers
+	 *
+	 * @param string $method
+	 * @param string $location
+	 *
 	 * @throws Exception
 	 */
-	private function bootServiceProviders()
+	private function bootServiceProviders($method = '', $location = '')
 	{
-		$services = $this->config->get('core.providers');
+		$suffix   = $location ? '.' . $location : '';
+		$services = $this->config->get('core.providers' . $suffix);
 
 		foreach ( $services as $service ) {
 			// Only boot global service providers here.
@@ -90,10 +95,9 @@ abstract class BasePlugin
 				throw new Exception('Provider must extend ServiceProvider.');
 			}
 
-			/**
-			 * @var \OWC\Elasticsearch\Plugin\ServiceProvider $service
-			 */
-			$service->register();
+			if ( method_exists($service, $method) ) {
+				$service->$method();
+			}
 		}
 	}
 
@@ -194,6 +198,16 @@ abstract class BasePlugin
 			false,
 			dirname(dirname(plugin_basename(__FILE__))) . '/languages/'
 		);
+	}
+
+	/**
+	 * Return root path of plugin.
+	 *
+	 * @return string
+	 */
+	public function getRootPath()
+	{
+		return $this->rootPath;
 	}
 
 }

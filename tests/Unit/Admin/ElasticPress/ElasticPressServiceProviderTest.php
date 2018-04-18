@@ -3,6 +3,7 @@
 namespace OWC\Elasticsearch\Tests\ElasticPress;
 
 use Mockery as m;
+use OWC\Elasticsearch\Admin\ElasticPress\ElasticPress;
 use OWC\Elasticsearch\Admin\ElasticPress\ElasticPressServiceProvider;
 use OWC\Elasticsearch\Config;
 use OWC\Elasticsearch\Plugin\BasePlugin;
@@ -57,6 +58,7 @@ class ElasticPressServiceProviderTest extends TestCase
 			'return' => 'false'
 		]);
 		$this->expectException(\Exception::class);
+
 		$this->service->register();
 
 		$this->assertTrue(true);
@@ -73,15 +75,23 @@ class ElasticPressServiceProviderTest extends TestCase
 			'return' => 'true'
 		]);
 
-		$this->plugin->loader->shouldReceive('addAction')->withArgs([
-			'init',
-			$this->service,
-			'initElasticPress',
-			10,
-			1
-		])->once();
+//		$this->plugin->loader->shouldReceive('addAction')->withArgs([
+//			'init',
+//			$elasticPress,
+//			'setSettings',
+//			10,
+//			1
+//		])->once();
 
-		$this->service->register();
+//		$this->plugin->loader->shouldReceive('addAction')->withArgs([
+//			'init',
+//			$elasticPress,
+//			'initElasticPress',
+//			10,
+//			1
+//		])->once();
+
+//		$this->service->boot();
 
 		$this->assertTrue(true);
 	}

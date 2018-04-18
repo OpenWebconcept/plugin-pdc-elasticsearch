@@ -1,6 +1,6 @@
 <?php
 
-namespace OWC\Elasticsearch\Tests\Config;
+namespace OWC\Elasticsearch\Tests\Unit\Config;
 
 use OWC\Elasticsearch\Config;
 use OWC\Elasticsearch\Tests\TestCase;

@@ -32,8 +32,7 @@ return [
 
 		]
 	],
+	'settings'  => apply_filters('owc/owc-elasticsearch/settings', [
 
-	'settings' => [
-
-	],
+	]),
 ];
