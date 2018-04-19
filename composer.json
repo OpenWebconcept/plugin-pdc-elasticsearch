@@ -23,9 +23,9 @@
     }
   },
   "scripts": {
-    "unit": "./vendor/bin/phpunit  --testsuite 'Unit Test' --colors=always",
-    "unit-cover": "./vendor/bin/phpunit  --testsuite 'Unit Test' --colors=always --coverage-html ./tests/coverage",
-    "integration": "./vendor/bin/phpunit  --testsuite 'Integration Test' --colors=always",
+    "unit": "clear && ./vendor/bin/phpunit  --testsuite 'Unit Test' --colors=always",
+    "unit-cover": "clear && ./vendor/bin/phpunit  --testsuite 'Unit Test' --colors=always --coverage-html ./tests/coverage",
+    "integration": "clear && ./vendor/bin/phpunit  --testsuite 'Integration Test' --colors=always",
     "test": [
       "@unit",
       "@integration"

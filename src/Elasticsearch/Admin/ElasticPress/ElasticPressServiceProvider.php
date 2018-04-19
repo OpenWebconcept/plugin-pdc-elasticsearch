@@ -6,6 +6,15 @@ use OWC\Elasticsearch\Plugin\ServiceProvider;
 
 class ElasticPressServiceProvider extends ServiceProvider
 {
+
+	/**
+	 * Register the service provider.
+	 */
+	public function register()
+	{
+
+	}
+
 	/**
 	 * Register the service provider
 	 * @throws \Exception
@@ -20,13 +29,5 @@ class ElasticPressServiceProvider extends ServiceProvider
 
 		$this->plugin->loader->addAction('init', $elasticPress, 'setSettings', 10, 1);
 		$this->plugin->loader->addAction('init', $elasticPress, 'initElasticPress', 10, 1);
-	}
-
-	/**
-	 * Register the service provider.
-	 */
-	public function register()
-	{
-
 	}
 }

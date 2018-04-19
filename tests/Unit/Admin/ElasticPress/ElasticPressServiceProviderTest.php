@@ -2,8 +2,8 @@
 
 namespace OWC\Elasticsearch\Tests\ElasticPress;
 
+use Exception;
 use Mockery as m;
-use OWC\Elasticsearch\Admin\ElasticPress\ElasticPress;
 use OWC\Elasticsearch\Admin\ElasticPress\ElasticPressServiceProvider;
 use OWC\Elasticsearch\Config;
 use OWC\Elasticsearch\Plugin\BasePlugin;
@@ -35,7 +35,7 @@ class ElasticPressServiceProviderTest extends TestCase
 
 		$this->config = m::mock(Config::class);
 
-		$this->plugin = m::mock(BasePlugin::class);
+		$this->plugin         = m::mock(BasePlugin::class);
 		$this->plugin->config = $this->config;
 		$this->plugin->loader = m::mock(Loader::class);
 
@@ -52,47 +52,16 @@ class ElasticPressServiceProviderTest extends TestCase
 	{
 
 		\WP_Mock::userFunction('is_plugin_active', [
-			[
+			'args'   => [
 				'elasticpress/elasticpress.php'
 			],
-			'return' => 'false'
-		]);
-		$this->expectException(\Exception::class);
-
-		$this->service->register();
-
-		$this->assertTrue(true);
-	}
-
-	/** @test */
-	public function it_sets_up_the_provider_correctly()
-	{
-
-		\WP_Mock::userFunction('is_plugin_active', [
-			[
-				'elasticpress/elasticpress.php'
-			],
-			'return' => 'true'
+			'times'  => 1,
+			'return' => false
 		]);
 
-//		$this->plugin->loader->shouldReceive('addAction')->withArgs([
-//			'init',
-//			$elasticPress,
-//			'setSettings',
-//			10,
-//			1
-//		])->once();
+		$this->expectException(Exception::class);
+		$this->expectExceptionMessage('Plugin ElasticPress should be installed and active to run this plugin');
 
-//		$this->plugin->loader->shouldReceive('addAction')->withArgs([
-//			'init',
-//			$elasticPress,
-//			'initElasticPress',
-//			10,
-//			1
-//		])->once();
-
-//		$this->service->boot();
-
-		$this->assertTrue(true);
+		$this->service->boot();
 	}
 }

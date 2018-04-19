@@ -89,9 +89,89 @@ class ElasticPressTest extends TestCase
 	}
 
 	/** @test */
-	public function it_transforms_the_args_to_the_required_output()
+	public function it_sets_the_correct_index_name()
+	{
+		$indexName = 'test';
+		$siteID    = 1;
+		$expected  = 'owc-pdc--1--development';
+		$actual    = $this->service->setIndexNameByEnvironment($indexName, $siteID);
+
+		$this->assertEquals($expected, $actual);
+
+		putenv('environment=test');
+
+		$expected = 'owc-pdc--1--test';
+		$actual   = $this->service->setIndexNameByEnvironment($indexName, $siteID);
+
+		$this->assertEquals($expected, $actual);
+
+		putenv('environment=');
+
+		$expected = 'owc-pdc--1';
+		$actual   = $this->service->setIndexNameByEnvironment($indexName, $siteID);
+
+		$this->assertEquals($expected, $actual);
+
+		define('EP_INDEX_PREFIX', 'prefix');
+		putenv('environment=test');
+
+		$expected = 'prefix--owc-pdc--1--test';
+		$actual   = $this->service->setIndexNameByEnvironment($indexName, $siteID);
+
+		$this->assertEquals($expected, $actual);
+	}
+
+	/** @test */
+	public function it_transforms_the_post_args_to_required_format()
 	{
 
-		$this->markTestIncomplete('Waiting methdos in pdc base plugin.');
+		$postIDStub   = 1;
+		$postArgsStub = [
+			'post_id'           => $postIDStub,
+			'ID'                => $postIDStub,
+			'post_author'       => '',
+			'post_date'         => '',
+			'post_date_gmt'     => '',
+			'post_title'        => '',
+			'post_excerpt'      => '',
+			'post_content'      => '',
+			'post_status'       => '',
+			'post_name'         => '',
+			'post_modified'     => '',
+			'post_modified_gmt' => '',
+			'post_parent'       => '',
+			'post_type'         => '',
+			'post_mime_type'    => '',
+			'permalink'         => '',
+			'guid'              => ''
+		];
+
+		$actual = $this->invokeMethod($this->service, 'transform', [
+			$postArgsStub,
+			$postIDStub
+		]);
+
+		$expected = [
+			'post_id'           => $postIDStub,
+			'ID'                => $postIDStub,
+			'post_date'         => '',
+			'post_date_gmt'     => '',
+			'post_title'        => '',
+			'post_excerpt'      => '',
+			'post_content'      => '',
+			'post_status'       => '',
+			'post_name'         => '',
+			'post_modified'     => '',
+			'post_modified_gmt' => '',
+			'post_parent'       => '',
+			'post_type'         => '',
+			'post_mime_type'    => '',
+			'permalink'         => '',
+			'guid'              => '',
+			'meta'              => [],
+			'terms'             => [],
+		];
+
+		$this->assertEquals($expected, $actual);
 	}
 }

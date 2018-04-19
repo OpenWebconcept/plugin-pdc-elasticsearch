@@ -64,6 +64,8 @@ class ElasticPress
 	}
 
 	/**
+	 * Transforms the postArgs to a filterable object.
+	 *
 	 * @param $postArgs
 	 * @param $postID
 	 *
@@ -71,13 +73,16 @@ class ElasticPress
 	 */
 	protected function transform($postArgs, $postID): array
 	{
-
-		$postArgs['meta']  = apply_filters('owc/elasticsearch/elasticpress/postargs/meta', $postArgs['meta'], $postID);
-		$postArgs['terms'] = apply_filters('owc/elasticsearch/elasticpress/postargs/terms', $postArgs['terms'], $postID);
-
+		$postArgs['post_author'] = isset($postArgs['post_author']) ? $postArgs['post_author'] : '';
 		if ( apply_filters('owc/elasticsearch/elasticpress/postargs/remote-author', true, $postID) ) {
 			unset($postArgs['post_author']);
 		}
+
+		$postArgs['meta'] = isset($postArgs['meta']) ? $postArgs['meta'] : [];
+		$postArgs['meta'] = apply_filters('owc/elasticsearch/elasticpress/postargs/meta', $postArgs['meta'], $postID);
+
+		$postArgs['terms'] = isset($postArgs['terms']) ? $postArgs['terms'] : [];
+		$postArgs['terms'] = apply_filters('owc/elasticsearch/elasticpress/postargs/terms', $postArgs['terms'], $postID);
 
 		$postArgs = apply_filters('owc/elasticsearch/elasticpress/postargs/all', $postArgs, $postID);
 
@@ -113,6 +118,8 @@ class ElasticPress
 	}
 
 	/**
+	 * Sets the uniformed indexName for ElasticSearch, based on prefix, environment variable and site ID.
+	 *
 	 * @param $indexName
 	 * @param $siteID
 	 *
@@ -120,7 +127,6 @@ class ElasticPress
 	 */
 	public function setIndexNameByEnvironment($indexName, $siteID)
 	{
-
 		$prefix = 'owc-pdc';
 		if ( defined('EP_INDEX_PREFIX') && EP_INDEX_PREFIX ) {
 			$prefix = rtrim(EP_INDEX_PREFIX, '-') . '--' . $prefix;
@@ -133,8 +139,6 @@ class ElasticPress
 		]);
 
 		$indexName = implode('--', $buildIndexName);
-		
-		var_dump( $indexName ); exit;
 
 		return $indexName;
 
