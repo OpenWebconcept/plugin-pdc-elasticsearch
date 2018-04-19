@@ -10,12 +10,12 @@ return [
 		 * Global providers.
 		 */
 
-
 		/**
 		 * Providers specific to the admin.
 		 */
 		'admin'    => [
-
+			OWC\Elasticsearch\Admin\Settings\SettingsServiceProvider::class,
+			OWC\Elasticsearch\Admin\ElasticPress\ElasticPressServiceProvider::class,
 		],
 
 		/**
@@ -32,8 +32,7 @@ return [
 
 		]
 	],
+	'settings'  => apply_filters('owc/owc-elasticsearch/settings', [
 
-	'settings' => [
-
-	],
+	]),
 ];
