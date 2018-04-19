@@ -93,6 +93,9 @@ class ElasticPressTest extends TestCase
 	{
 		$indexName = 'test';
 		$siteID    = 1;
+
+		putenv('environment=development');
+
 		$expected  = 'owc-pdc--1--development';
 		$actual    = $this->service->setIndexNameByEnvironment($indexName, $siteID);
 
