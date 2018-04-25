@@ -3,6 +3,7 @@
 namespace OWC\Elasticsearch;
 
 use OWC\Elasticsearch\Plugin\BasePlugin;
+use OWC\Elasticsearch\Admin\Admin;
 
 class Plugin extends BasePlugin
 {
@@ -20,7 +21,7 @@ class Plugin extends BasePlugin
 	 *
 	 * @var string
 	 */
-	const VERSION = '1.0.0';
+	const VERSION = '0.1';
 
 	/**
 	 * Boot the plugin.
@@ -28,7 +29,19 @@ class Plugin extends BasePlugin
 	 */
 	public function boot()
 	{
+		$this->config->setPluginName(self::NAME);
+		$this->config->setFilterExceptions(['admin', 'core', 'cli']);
+		$this->config->boot();
 
+		$this->bootServiceProviders();
+
+		if ( is_admin() ) {
+			$admin = new Admin($this);
+			$admin->boot();
+		}
+
+		$this->loader->addAction('init', $this->config, 'filter', 9);
+		$this->loader->register();
 	}
 
 	/**

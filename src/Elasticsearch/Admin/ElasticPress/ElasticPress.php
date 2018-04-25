@@ -45,7 +45,7 @@ class ElasticPress
 	 */
 	public function setLanguage()
 	{
-		$languageFromConfig = apply_filters('owc/elasticsearch/elasticpress/language', $this->config->get('elasticpress.language'));
+		$languageFromConfig = $this->config->get('elasticpress.language');
 		add_filter('ep_analyzer_language', function($language, $analyzer) use ($languageFromConfig) {
 			return $languageFromConfig;
 		}, 10, 2);

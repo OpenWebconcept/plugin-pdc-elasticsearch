@@ -3,10 +3,7 @@
 namespace OWC\Elasticsearch\Plugin;
 
 use Exception;
-use OWC\Elasticsearch\Admin\Admin;
 use OWC\Elasticsearch\Config;
-use OWC\Elasticsearch\Frontend\Frontend;
-use OWC\Elasticsearch\Network\Network;
 
 abstract class BasePlugin
 {
@@ -38,50 +35,67 @@ abstract class BasePlugin
 	 * Register the actions and filters from the loader.
 	 *
 	 * @param string $rootPath
-	 *
-	 * @throws Exception
 	 */
 	public function __construct($rootPath)
 	{
 		$this->rootPath = $rootPath;
-
-		$this->config = new Config($this->rootPath . '/config');
-		$this->config->boot();
+		$this->loadPluginTextdomain();
 
 		$this->loader = Loader::getInstance();
 
-		$this->bootServiceProviders('register');
+		$this->config = new Config($this->rootPath . '/config');
 
-		$this->bootLanguages();
-
-		if ( is_network_admin() ) {
-			$this->bootServiceProviders('register', 'network');
-		}
-
-		$this->bootServiceProviders('register', is_admin() ? 'admin' : 'frontend');
-
-		$this->bootServiceProviders('boot');
-		if ( is_network_admin() ) {
-			$this->bootServiceProviders('boot', 'network');
-		}
-
-		$this->bootServiceProviders('boot', is_admin() ? 'admin' : 'frontend');
-
-		$this->loader->register();
+		$this->addStartUpHooks();
+		$this->addTearDownHooks();
 	}
+
+
+	//	/**
+	//	 * Creates the base plugin functionality.
+	//	 *
+	//	 * Create startup hooks and tear down hooks.
+	//	 * Boot up admin and frontend functionality.
+	//	 * Register the actions and filters from the loader.
+	//	 *
+	//	 * @param string $rootPath
+	//	 *
+	//	 * @throws Exception
+	//	 */
+	//	public function __construct($rootPath)
+	//	{
+	//		$this->rootPath = $rootPath;
+	//
+	//		$this->config = new Config($this->rootPath . '/config');
+	//		$this->config->boot();
+	//
+	//		$this->loader = Loader::getInstance();
+	//
+	//		$this->bootServiceProviders('register');
+	//
+	//		$this->bootLanguages();
+	//
+	//		if ( is_network_admin() ) {
+	//			$this->bootServiceProviders('register', 'network');
+	//		}
+	//
+	//		$this->bootServiceProviders('register', is_admin() ? 'admin' : 'frontend');
+	//
+	//		$this->bootServiceProviders('boot');
+	//		if ( is_network_admin() ) {
+	//			$this->bootServiceProviders('boot', 'network');
+	//		}
+	//
+	//		$this->bootServiceProviders('boot', is_admin() ? 'admin' : 'frontend');
+	//
+	//		$this->loader->register();
+	//	}
 
 	/**
 	 * Boot service providers
-	 *
-	 * @param string $method
-	 * @param string $location
-	 *
-	 * @throws Exception
 	 */
-	private function bootServiceProviders($method = '', $location = '')
+	public function bootServiceProviders()
 	{
-		$suffix   = $location ? '.' . $location : '';
-		$services = $this->config->get('core.providers' . $suffix);
+		$services = $this->config->get('core.providers');
 
 		foreach ( $services as $service ) {
 			// Only boot global service providers here.
@@ -92,29 +106,60 @@ abstract class BasePlugin
 			$service = new $service($this);
 
 			if ( ! $service instanceof ServiceProvider ) {
-				throw new Exception('Provider must extend ServiceProvider.');
+				throw new \Exception('Provider must extend ServiceProvider.');
 			}
 
-			if ( method_exists($service, $method) ) {
-				$service->$method();
-			}
+			$service->register();
 		}
 	}
+
+	public function loadPluginTextdomain()
+	{
+		load_plugin_textdomain($this->getName(), false, $this->getName() . '/languages/');
+	}
+
+	//	/**
+	//	 * Boot service providers
+	//	 *
+	//	 * @param string $method
+	//	 * @param string $location
+	//	 *
+	//	 * @throws Exception
+	//	 */
+	//	public function bootServiceProviders($method = '', $location = '')
+	//	{
+	//		$suffix   = $location ? '.' . $location : '';
+	//		$services = $this->config->get('core.providers' . $suffix);
+	//
+	//		foreach ( $services as $service ) {
+	//			// Only boot global service providers here.
+	//			if ( is_array($service) ) {
+	//				continue;
+	//			}
+	//
+	//			$service = new $service($this);
+	//
+	//			if ( ! $service instanceof ServiceProvider ) {
+	//				throw new Exception('Provider must extend ServiceProvider.');
+	//			}
+	//
+	//			if ( method_exists($service, $method) ) {
+	//				$service->$method();
+	//			}
+	//		}
+	//	}
 
 	/**
 	 * Startup hooks to initialize the plugin.
 	 *
 	 * @param $file
 	 */
-	public static function addStartUpHooks($file)
+	public static function addStartUpHooks()
 	{
 		/**
 		 * This hook registers a plugin function to be run when the plugin is activated.
 		 */
-		register_activation_hook($file, [
-			'\OWC\Elasticsearch\Hooks',
-			'pluginActivation'
-		]);
+		register_activation_hook(__FILE__, ['\OWC\Elasticsearch\Hooks', 'pluginActivation']);
 
 		add_action('admin_notices', function() {
 			if ( get_transient('pdc-elasticsearch-plugin-actions-notice') ) {
@@ -132,10 +177,7 @@ abstract class BasePlugin
 		 * This hook is run immediately after any plugin is activated, and may be used to detect the activation of plugins.
 		 * If a plugin is silently activated (such as during an update), this hook does not fire.
 		 */
-		add_action('activated_plugin', [
-			'\OWC\Elasticsearch\Hooks',
-			'pluginActivated'
-		], 10, 2);
+		add_action('activated_plugin', ['\OWC\Elasticsearch\Hooks', 'pluginActivated'], 10, 2);
 	}
 
 	/**
@@ -143,15 +185,12 @@ abstract class BasePlugin
 	 *
 	 * @param $file
 	 */
-	public static function addTearDownHooks($file)
+	public static function addTearDownHooks()
 	{
 		/**
 		 * This hook registers a plugin function to be run when the plugin is deactivated.
 		 */
-		register_deactivation_hook($file, [
-			'\OWC\Elasticsearch\Hooks',
-			'pluginDeactivation'
-		]);
+		register_deactivation_hook(__FILE__, ['\OWC\Elasticsearch\Hooks', 'pluginDeactivation']);
 
 		/**
 		 * This hook is run immediately after any plugin is deactivated, and may be used to detect the deactivation of other plugins.
@@ -162,10 +201,7 @@ abstract class BasePlugin
 		 * Registers the uninstall hook that will be called when the user clicks on the uninstall link that calls for the plugin to uninstall itself.
 		 * The link won’t be active unless the plugin hooks into the action.
 		 */
-		register_uninstall_hook($file, [
-			'\OWC\Elasticsearch\Hooks',
-			'uninstallPlugin'
-		]);
+		register_uninstall_hook(__FILE__, ['\OWC\Elasticsearch\Hooks', 'uninstallPlugin']);
 	}
 
 	/**
@@ -187,27 +223,4 @@ abstract class BasePlugin
 	{
 		return static::VERSION;
 	}
-
-	/**
-	 * Add language file.
-	 */
-	private function bootLanguages()
-	{
-		load_plugin_textdomain(
-			'owc-elasticsearch',
-			false,
-			dirname(dirname(plugin_basename(__FILE__))) . '/languages/'
-		);
-	}
-
-	/**
-	 * Return root path of plugin.
-	 *
-	 * @return string
-	 */
-	public function getRootPath()
-	{
-		return $this->rootPath;
-	}
-
 }

@@ -12,8 +12,8 @@ class SettingsServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-		$this->plugin->loader->addFilter('owc/pdc_base/config/settings_pages', $this, 'addTab', 10, 1);
-		$this->plugin->loader->addFilter('owc/pdc_base/config/settings', $this, 'addSettings', 10, 1);
+		$this->plugin->loader->addFilter('owc/pdc-base/config/settings_pages', $this, 'addTab');
+		$this->plugin->loader->addFilter('owc/pdc-base/config/settings', $this, 'addSettings');
 	}
 
 	/**
