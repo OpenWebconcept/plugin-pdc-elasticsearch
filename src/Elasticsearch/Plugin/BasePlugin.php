@@ -117,14 +117,14 @@ abstract class BasePlugin
 		]);
 
 		add_action('admin_notices', function() {
-			if ( get_transient('owc-elasticsearch-plugin-actions-notice') ) {
+			if ( get_transient('pdc-elasticsearch-plugin-actions-notice') ) {
 
 				get_option( '')
 				?>
                 <div class="updated notice is-dismissible">
                     <p>Thank you for using this plugin! <strong>You are awesome</strong>.</p>
                 </div>
-				<?php delete_transient('owc-elasticsearch-plugin-actions-notice');
+				<?php delete_transient('pdc-elasticsearch-plugin-actions-notice');
 			}
 		});
 

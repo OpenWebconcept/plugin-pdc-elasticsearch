@@ -12,7 +12,7 @@ class Plugin extends BasePlugin
 	 *
 	 * @var string
 	 */
-	const NAME = 'owc-elasticsearch';
+	const NAME = 'pdc-elasticsearch';
 
 	/**
 	 * Version of the plugin.
