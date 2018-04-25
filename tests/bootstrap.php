@@ -29,8 +29,8 @@ if ( file_exists($_tests_dir . '/includes/bootstrap.php') ) {
 \WP_Mock::setUsePatchwork(true);
 \WP_Mock::bootstrap();
 
-$GLOBALS['owc-elasticsearch'] = [
-	'active_plugins' => ['owc-elasticsearch/owc-elasticsearch.php'],
+$GLOBALS['pdc-elasticsearch'] = [
+	'active_plugins' => ['pdc-elasticsearch/pdc-elasticsearch.php'],
 ];
 
 class WP_CLI
