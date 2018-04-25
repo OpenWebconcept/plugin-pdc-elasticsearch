@@ -34,7 +34,7 @@ class ElasticPress
 	 */
 	public function setIndexables()
 	{
-		$indexablesFromConfig = apply_filters('owc/elasticsearch/elasticpress/indexables', $this->config->get('elasticpress.indexables'));
+		$indexablesFromConfig = apply_filters('owc/pdc-elasticsearch/elasticpress/indexables', $this->config->get('elasticpress.indexables'));
 		add_filter('ep_indexable_post_types', function($post_types) use ($indexablesFromConfig) {
 			return $indexablesFromConfig;
 		}, 10, 1);
@@ -74,17 +74,17 @@ class ElasticPress
 	protected function transform($postArgs, $postID): array
 	{
 		$postArgs['post_author'] = isset($postArgs['post_author']) ? $postArgs['post_author'] : '';
-		if ( apply_filters('owc/elasticsearch/elasticpress/postargs/remote-author', true, $postID) ) {
+		if ( apply_filters('owc/pdc-elasticsearch/elasticpress/postargs/remote-author', true, $postID) ) {
 			unset($postArgs['post_author']);
 		}
 
 		$postArgs['meta'] = isset($postArgs['meta']) ? $postArgs['meta'] : [];
-		$postArgs['meta'] = apply_filters('owc/elasticsearch/elasticpress/postargs/meta', $postArgs['meta'], $postID);
+		$postArgs['meta'] = apply_filters('owc/pdc-elasticsearch/elasticpress/postargs/meta', $postArgs['meta'], $postID);
 
 		$postArgs['terms'] = isset($postArgs['terms']) ? $postArgs['terms'] : [];
-		$postArgs['terms'] = apply_filters('owc/elasticsearch/elasticpress/postargs/terms', $postArgs['terms'], $postID);
+		$postArgs['terms'] = apply_filters('owc/pdc-elasticsearch/elasticpress/postargs/terms', $postArgs['terms'], $postID);
 
-		$postArgs = apply_filters('owc/elasticsearch/elasticpress/postargs/all', $postArgs, $postID);
+		$postArgs = apply_filters('owc/pdc-elasticsearch/elasticpress/postargs/all', $postArgs, $postID);
 
 		return $postArgs;
 	}
