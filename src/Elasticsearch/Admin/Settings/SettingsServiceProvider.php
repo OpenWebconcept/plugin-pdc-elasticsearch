@@ -17,67 +17,33 @@ class SettingsServiceProvider extends ServiceProvider
 	}
 
 	/**
-	 * Register the service provider.
-	 */
-	public function boot()
-	{
-		// TODO: Implement register() method.
-	}
-
-	/**
 	 * @param $settings
 	 *
 	 * @return array
 	 */
-	public function addTab($settings)
+	public function addTab($pdcBaseTabSettings)
 	{
-		$settings['base']['tabs']['elasticsearch'] = __('Elasticsearch', '');
 
-		return $settings;
+		$tabSettings = $this->plugin->config->get('settings_pages');
+
+		$mergedTabSettings = array_merge( $pdcBaseTabSettings['base']['tabs'], $tabSettings['base']['tabs']);
+		$pdcBaseTabSettings['base']['tabs'] = $mergedTabSettings;
+
+		return $pdcBaseTabSettings;
 	}
 
 	/**
-	 * Register metaboxes for settings page
+	 * register metaboxes for settings page
 	 *
-	 * @param $metaboxes
+	 * @param $rwmbMetaboxes
 	 *
 	 * @return array
 	 */
-	public function addSettings($metaboxes)
+	public function addSettings($pdcBaseMetaboxes)
 	{
-		$configMetaboxes = [
-			'elasticsearch' => [
-				'id'             => 'elasticsearch',
-				'title'          => __('Elasticsearch', 'owc-elasticsearch'),
-				'settings_pages' => '_owc_pdc_base_settings',
-				'tab'            => 'elasticsearch',
-				'fields'         => [
-					'elasticsearch' => [
-						'url'    => [
-							'id'   => 'setting_elasticsearch_url',
-							'name' => __('Instance url', 'owc-elasticsearch'),
-							'desc' => __('URL inclusief http(s)://', 'owc-elasticsearch'),
-							'type' => 'text'
-						],
-						'shield' => [
-							'id'   => 'setting_elasticsearch_shield',
-							'name' => __('Instance shield', 'owc-elasticsearch'),
-							'desc' => __('URL inclusief http(s)://', 'owc-elasticsearch'),
-							'type' => 'text'
-						],
-						'prefix' => [
-							'id'   => 'setting_elasticsearch_prefix',
-							'name' => __('Instance prefix', 'owc-elasticsearch'),
-							'desc' => __('', 'owc-elasticsearch'),
-							'type' => 'text'
-						]
-					]
-				]
-			]
-		];
 
-		$configMetaboxes = array_merge($metaboxes, $configMetaboxes);
+		$configMetaboxes = $this->plugin->config->get('settings');
 
-		return $configMetaboxes;
+		return array_merge($pdcBaseMetaboxes, $configMetaboxes);
 	}
 }

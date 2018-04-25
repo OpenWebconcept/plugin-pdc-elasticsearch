@@ -15,7 +15,6 @@
  */
 
 use OWC\Elasticsearch\Plugin;
-use OWC\Elasticsearch\Plugin\BasePlugin;
 
 /**
  * If this file is called directly, abort.
