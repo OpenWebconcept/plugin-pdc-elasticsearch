@@ -34,7 +34,7 @@ class ElasticPress
 	 */
 	public function setIndexables()
 	{
-		$indexablesFromConfig = apply_filters('owc/pdc-elasticsearch/elasticpress/indexables', $this->config->get('elasticpress.indexables'));
+		$indexablesFromConfig = $this->config->get('elasticpress.indexables');
 		add_filter('ep_indexable_post_types', function($post_types) use ($indexablesFromConfig) {
 			return $indexablesFromConfig;
 		}, 10, 1);
