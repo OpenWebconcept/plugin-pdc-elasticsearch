@@ -97,21 +97,21 @@ class ElasticPress
 
 		$settings = $this->getSettings();
 
-		if ( isset($settings['_owc_setting_elasticsearch_url']) && ( ! defined('EP_HOST') ) ) {
+		if ( isset($settings['setting_elasticsearch_url']) && ( ! defined('EP_HOST') ) ) {
 
-			if ( isset($settings['_owc_setting_elasticsearch_shield']) && ( ! defined('ES_SHIELD') ) ) {
-				define('ES_SHIELD', $settings['_owc_setting_elasticsearch_shield']);
+			if ( isset($settings['setting_elasticsearch_shield']) && ( ! defined('ES_SHIELD') ) ) {
+				define('ES_SHIELD', $settings['setting_elasticsearch_shield']);
 			}
 
-			$url = parse_url($settings['_owc_setting_elasticsearch_url']);
+			$url = parse_url($settings['setting_elasticsearch_url']);
 			define('EP_HOST', $url['scheme'] . '://' . ES_SHIELD . '@' . $url['host'] . '/');
 
 			update_option('ep_host', EP_HOST);
 
 		}
 
-		if ( isset($settings['_owc_setting_elasticsearch_prefix']) && ( ! defined('EP_INDEX_PREFIX') ) ) {
-			define('EP_INDEX_PREFIX', $settings['_owc_setting_elasticsearch_prefix']);
+		if ( isset($settings['setting_elasticsearch_prefix']) && ( ! defined('EP_INDEX_PREFIX') ) ) {
+			define('EP_INDEX_PREFIX', $settings['setting_elasticsearch_prefix']);
 		}
 
 		add_filter('ep_index_name', [$this, 'setIndexNameByEnvironment'], 10, 2);
@@ -128,8 +128,9 @@ class ElasticPress
 	public function setIndexNameByEnvironment($indexName, $siteID)
 	{
 		$prefix = 'owc-pdc';
+
 		if ( defined('EP_INDEX_PREFIX') && EP_INDEX_PREFIX ) {
-			$prefix = rtrim(EP_INDEX_PREFIX, '-') . '--' . $prefix;
+			$prefix = EP_INDEX_PREFIX . $prefix;
 		}
 
 		$buildIndexName = array_filter([
@@ -141,7 +142,6 @@ class ElasticPress
 		$indexName = implode('--', $buildIndexName);
 
 		return $indexName;
-
 	}
 
 	/**
