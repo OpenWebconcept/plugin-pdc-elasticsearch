@@ -1,6 +1,6 @@
 {
-  "name": "plugin/owc-elasticsearch",
-  "description": "OWC Elasticsearch",
+  "name": "plugin/pdc-elasticsearch",
+  "description": "PDC Elasticsearch",
   "homepage": "https://www.yardinternet.nl",
   "authors": [
     {
