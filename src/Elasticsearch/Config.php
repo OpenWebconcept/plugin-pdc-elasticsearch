@@ -5,203 +5,189 @@ namespace OWC\Elasticsearch;
 class Config
 {
 
-    /**
-     * Directory where config files are located.
-     *
-     * @var string
-     */
-    protected $path;
-
 	/**
-	 * Plugin name
+	 * Directory where config files are located.
 	 *
 	 * @var string
 	 */
-	protected $pluginName;
+	protected $path;
 
 	/**
-	 * Array with all filters to be called after processing config files.
+	 * Array with names of protected nodes in the config-items.
 	 *
 	 * @var array
 	 */
-	protected $filters = [];
+	protected $protectedNodes = [];
 
 	/**
-	 * Array with names of exceptions to the build-in config filters.
+	 * Array with all the config values.
 	 *
 	 * @var array
 	 */
-	protected $filterExceptions = [];
-
-    /**
-     * Array with all the config values.
-     *
-     * @var array
-     */
-    protected $items = [];
-
-    /**
-     * Config repository constructor.
-     *
-     * Boot the configuration files and get all the files from the
-     * config directory and add them to the config array.
-     *
-     * @param string $path Path to the configuration files.
-     * @param array  $items
-     */
-    public function __construct($path, array $items = [])
-    {
-        $this->items = $items;
-        $this->path = $path;
-    }
-
-    /**
-     * Boot up the configuration repository.
-     */
-    public function boot()
-    {
-        $this->scanDirectory($this->getPath());
-    }
+	protected $items = [];
 
 	/**
-	 * Filter distinct 'file' nodes in config-items.
+	 * Config repository constructor.
+	 *
+	 * Boot the configuration files and get all the files from the
+	 * config directory and add them to the config array.
+	 *
+	 * @param string $path Path to the configuration files.
+	 * @param array  $items
 	 */
-	public function filter()
+	public function __construct($path, array $items = [])
 	{
-		foreach ( $this->filters as $filter ) {
+		$this->items = $items;
+		$this->path  = $path;
+	}
 
-			$filterName = 'owc/' . $this->pluginName . '/config/' . $filter;
-			$configKey = str_replace( '/', '.', $filter );
+	/**
+	 * Boot up the configuration repository.
+	 */
+	public function boot()
+	{
+		$this->scanDirectory($this->getPath());
+	}
 
-			$parts = explode('/', $filter);
+	/**
+	 * Retrieve a specific config value from the configuration repository.
+	 *
+	 * @param $setting
+	 *
+	 * @return array|mixed
+	 */
+	public function get($setting)
+	{
+		if ( ! $setting ) {
+			return $this->all();
+		}
 
-			$current = $this->items;
+		$parts = explode('.', $setting);
 
-			foreach ($parts as $part) {
-				$current = $current[$part];
+		$current = $this->items;
+
+		foreach ( $parts as $part ) {
+			$current = $current[ $part ];
+		}
+
+		return $current;
+	}
+
+	/**
+	 * Set a given configuration value.
+	 *
+	 * @param  array|string $key
+	 * @param  mixed        $value
+	 *
+	 * @return void
+	 */
+	public function set($key, $value = null)
+	{
+		$keys = is_array($key) ? $key : [$key => $value];
+
+		$tempItems = &$this->items;
+
+		foreach ( $keys as $key => $value ) {
+
+			if ( in_array($key, $this->protectedNodes) ) {
+				continue;
 			}
 
-			$this->set($this->items, $configKey, apply_filters( $filterName, $current ));
+			$parts = explode('.', $key);
+			while ( count($parts) > 1 ) {
+
+				$part = array_shift($parts);
+				// If the key doesn't exist at this depth, we will just create an empty array
+				// to hold the next value, allowing us to create the arrays to hold final
+				// values at the correct depth. Then we'll keep digging into the array.
+				if ( ! isset($tempItems[ $part ]) || ! is_array($tempItems[ $part ]) ) {
+					$tempItems[ $part ] = [];
+				}
+				$tempItems = &$tempItems[ $part ];
+			}
+
+			$tempItems[ array_shift($parts) ] = $value;
 		}
 	}
 
-    /**
-     * Retrieve a specific config value from the configuration repository.
-     *
-     * @param $setting
-     *
-     * @return array|mixed
-     */
-    public function get($setting)
-    {
-        if ( ! $setting) {
-            return $this->all();
-        }
-
-        $parts = explode('.', $setting);
-
-        $current = $this->items;
-
-        foreach ($parts as $part) {
-            $current = $current[$part];
-        }
-
-        return $current;
-    }
-
 	/**
-	 * Method to directly change/set values into the config->items array
+	 * Return all config values.
 	 *
-	 * @param $items
-	 * @param $key
-	 * @param $value
-	 *
+	 * @return array
 	 */
-	public function set(&$items, $key, $value)
+	public function all()
 	{
-		$parts = explode('.', $key);
-
-		while(count($parts) > 1) {
-			$key = array_shift($parts);
-
-			$items = &$items[$key];
-		}
-
-		$items[array_shift($parts)] = $value;
+		return $this->items;
 	}
 
-    /**
-     * Return all config values.
-     *
-     * @return array
-     */
-    public function all()
-    {
-        return $this->items;
-    }
-
-    /**
-     * Get the path where the files will be fetched from.
-     *
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->path;
-    }
-
-    /**
-     * Sets the path where the config files are fetched from.
-     *
-     * @param $path
-     */
-    public function setPath($path)
-    {
-        $this->path = $path;
-    }
-
 	/**
-	 * Sets the pluginName.
+	 * Get the path where the files will be fetched from.
 	 *
-	 * @param $pluginName
+	 * @return string
 	 */
-	public function setPluginName($pluginName)
+	public function getPath()
 	{
-		$this->pluginName = $pluginName;
+		return $this->path;
 	}
 
-	public function setFilterExceptions($exceptions = [])
+	/**
+	 * Sets the path where the config files are fetched from.
+	 *
+	 * @param $path
+	 */
+	public function setPath($path)
 	{
-		$this->filterExceptions = $exceptions;
+		$this->path = $path;
+	}
+
+	public function setProtectedNodes($nodes = [])
+	{
+		$this->protectedNodes = $nodes;
+	}
+
+	/**
+	 * Push a value onto an array configuration value.
+	 *
+	 * @param  string $key
+	 * @param  mixed  $value
+	 *
+	 * @return void
+	 */
+	public function push($key, $value)
+	{
+		$array   = $this->get($key);
+		$array[] = $value;
+		$this->set($key, $array);
 	}
 
 	private function scanDirectory($path)
 	{
+		$this->items = [];
+
 		$files = glob($path . '/*', GLOB_NOSORT);
 
-		foreach ($files as $file) {
+		foreach ( $files as $file ) {
+
 			$fileType = filetype($file);
 
-			if ($fileType == "dir") {
+			if ( $fileType == "dir" ) {
 				$this->scanDirectory($file);
 			} else {
-				$name = str_replace('.php', '', basename($file));
+				$name  = str_replace('.php', '', basename($file));
 				$value = include $file;
 
 				// If its in the first directory just add the file.
-				if ($path == $this->path) {
-					$this->items[$name] = $value;
-					$this->addToFilters($name, $name);
+				if ( $path == $this->path ) {
+					$this->items[ $name ] = $value;
 					continue;
 				}
 
 				// Get the path from the starting path.
-				$path = str_replace($this->path.'/', '', $path);
+				$path = str_replace($this->path . '/', '', $path);
 
 				// Build an array from the path.
-				$items = [];
-				$items[$name] = $value;
-				$this->addToFilters($path . '/' . $name, $name);
+				$items          = [];
+				$items[ $name ] = $value;
 				foreach ( array_reverse(explode('/', $path)) as $key ) {
 					$items = [$key => $items];
 				}
@@ -211,13 +197,4 @@ class Config
 			}
 		}
 	}
-
-	private function addToFilters($filter, $name)
-	{
-		//skip filter exceptions
-		if ( ! in_array($name, $this->filterExceptions )) {
-			$this->filters[] = $filter;
-		}
-	}
-
 }

@@ -35,6 +35,8 @@ abstract class BasePlugin
 	 * Register the actions and filters from the loader.
 	 *
 	 * @param string $rootPath
+	 *
+	 * @throws Exception
 	 */
 	public function __construct($rootPath)
 	{
@@ -44,58 +46,41 @@ abstract class BasePlugin
 		$this->loader = Loader::getInstance();
 
 		$this->config = new Config($this->rootPath . '/config');
+		$this->config->boot();
+
+		$this->bootServiceProviders('register');
+
+		if ( is_network_admin() ) {
+			$this->bootServiceProviders('register', 'network');
+		}
+
+		$this->bootServiceProviders('register', is_admin() ? 'admin' : 'frontend');
+
+		$this->bootServiceProviders('boot');
+		if ( is_network_admin() ) {
+			$this->bootServiceProviders('boot', 'network');
+		}
+
+		$this->bootServiceProviders('boot', is_admin() ? 'admin' : 'frontend');
+
+		$this->loader->register();
 
 		$this->addStartUpHooks();
 		$this->addTearDownHooks();
 	}
 
-
-	//	/**
-	//	 * Creates the base plugin functionality.
-	//	 *
-	//	 * Create startup hooks and tear down hooks.
-	//	 * Boot up admin and frontend functionality.
-	//	 * Register the actions and filters from the loader.
-	//	 *
-	//	 * @param string $rootPath
-	//	 *
-	//	 * @throws Exception
-	//	 */
-	//	public function __construct($rootPath)
-	//	{
-	//		$this->rootPath = $rootPath;
-	//
-	//		$this->config = new Config($this->rootPath . '/config');
-	//		$this->config->boot();
-	//
-	//		$this->loader = Loader::getInstance();
-	//
-	//		$this->bootServiceProviders('register');
-	//
-	//		$this->bootLanguages();
-	//
-	//		if ( is_network_admin() ) {
-	//			$this->bootServiceProviders('register', 'network');
-	//		}
-	//
-	//		$this->bootServiceProviders('register', is_admin() ? 'admin' : 'frontend');
-	//
-	//		$this->bootServiceProviders('boot');
-	//		if ( is_network_admin() ) {
-	//			$this->bootServiceProviders('boot', 'network');
-	//		}
-	//
-	//		$this->bootServiceProviders('boot', is_admin() ? 'admin' : 'frontend');
-	//
-	//		$this->loader->register();
-	//	}
-
 	/**
 	 * Boot service providers
+	 *
+	 * @param string $method
+	 * @param string $location
+	 *
+	 * @throws Exception
 	 */
-	public function bootServiceProviders()
+	public function bootServiceProviders($method = '', $location = '')
 	{
-		$services = $this->config->get('core.providers');
+		$suffix   = $location ? '.' . $location : '';
+		$services = $this->config->get('core.providers' . $suffix);
 
 		foreach ( $services as $service ) {
 			// Only boot global service providers here.
@@ -106,10 +91,12 @@ abstract class BasePlugin
 			$service = new $service($this);
 
 			if ( ! $service instanceof ServiceProvider ) {
-				throw new \Exception('Provider must extend ServiceProvider.');
+				throw new Exception('Provider must extend ServiceProvider.');
 			}
 
-			$service->register();
+			if ( method_exists($service, $method) ) {
+				$service->$method();
+			}
 		}
 	}
 
@@ -117,37 +104,6 @@ abstract class BasePlugin
 	{
 		load_plugin_textdomain($this->getName(), false, $this->getName() . '/languages/');
 	}
-
-	//	/**
-	//	 * Boot service providers
-	//	 *
-	//	 * @param string $method
-	//	 * @param string $location
-	//	 *
-	//	 * @throws Exception
-	//	 */
-	//	public function bootServiceProviders($method = '', $location = '')
-	//	{
-	//		$suffix   = $location ? '.' . $location : '';
-	//		$services = $this->config->get('core.providers' . $suffix);
-	//
-	//		foreach ( $services as $service ) {
-	//			// Only boot global service providers here.
-	//			if ( is_array($service) ) {
-	//				continue;
-	//			}
-	//
-	//			$service = new $service($this);
-	//
-	//			if ( ! $service instanceof ServiceProvider ) {
-	//				throw new Exception('Provider must extend ServiceProvider.');
-	//			}
-	//
-	//			if ( method_exists($service, $method) ) {
-	//				$service->$method();
-	//			}
-	//		}
-	//	}
 
 	/**
 	 * Startup hooks to initialize the plugin.
@@ -164,11 +120,11 @@ abstract class BasePlugin
 		add_action('admin_notices', function() {
 			if ( get_transient('pdc-elasticsearch-plugin-actions-notice') ) {
 
-				get_option( '')
+				get_option('')
 				?>
-                <div class="updated notice is-dismissible">
-                    <p>Thank you for using this plugin! <strong>You are awesome</strong>.</p>
-                </div>
+				<div class="updated notice is-dismissible">
+					<p>Thank you for using this plugin! <strong>You are awesome</strong>.</p>
+				</div>
 				<?php delete_transient('pdc-elasticsearch-plugin-actions-notice');
 			}
 		});
@@ -222,5 +178,15 @@ abstract class BasePlugin
 	public function getVersion()
 	{
 		return static::VERSION;
+	}
+
+	/**
+	 * Set the action for the plugin.
+	 *
+	 * @return void
+	 */
+	public function addActionPlugin()
+	{
+		do_action('owc/' . $this->getName() . '/plugin', $this);
 	}
 }

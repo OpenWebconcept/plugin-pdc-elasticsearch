@@ -12,66 +12,33 @@ class SettingsServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-		$this->plugin->loader->addFilter('mb_settings_pages', $this, 'addTab', 10, 1);
-		$this->plugin->loader->addFilter('rwmb_meta_boxes', $this, 'addSettings', 10, 1);
+		$this->plugin->loader->addAction('owc/pdc-base/plugin', $this, 'addTab', 10, 1);
+		$this->plugin->loader->addAction('owc/pdc-base/plugin', $this, 'addSettings', 10, 1);
 	}
 
 	/**
-	 * @param $settings
+	 * @param $basePlugin
 	 *
-	 * @return array
+	 * @return void
 	 */
-	public function addTab($pdcBaseTabSettings)
+	public function addTab($basePlugin)
 	{
+		$configMetaboxes = $this->plugin->config->get('settings_pages.elasticsearch');
 
-		$tabSettings = $this->plugin->config->get('settings_pages');
-
-		$mergedTabSettings = array_merge( $pdcBaseTabSettings['base']['tabs'], $tabSettings['base']['tabs']);
-		$pdcBaseTabSettings['base']['tabs'] = $mergedTabSettings;
-
-		return $pdcBaseTabSettings;
+		$basePlugin->config->set('settings_pages.base.tabs.elasticsearch', $configMetaboxes);
 	}
 
 	/**
-	 * register metaboxes for settings page
+	 * Register metaboxes for settings page
 	 *
-	 * @param $rwmbMetaboxes
+	 * @param $basePlugin
 	 *
-	 * @return array
+	 * @return void
 	 */
-	public function addSettings($pdcBaseMetaboxes)
+	public function addSettings($basePlugin)
 	{
-		$configMetaboxes = [
-			'elasticsearch' => [
-				'id'             => 'elasticsearch',
-				'title'          => __('Elasticsearch', 'owc-elasticsearch'),
-				'settings_pages' => '_owc_pdc_base_settings',
-				'tab'            => 'elasticsearch',
-				'fields'         => [
-					[
-						'id'   => 'setting_elasticsearch_url',
-						'name' => __('Instance url', 'owc-elasticsearch'),
-						'desc' => __('URL inclusief http(s)://', 'owc-elasticsearch'),
-						'type' => 'text'
-					],
-					[
-						'id'   => 'setting_elasticsearch_shield',
-						'name' => __('Instance shield', 'owc-elasticsearch'),
-						'desc' => __('URL inclusief http(s)://', 'owc-elasticsearch'),
-						'type' => 'text'
-					],
-					[
-						'id'   => 'setting_elasticsearch_prefix',
-						'name' => __('Instance prefix', 'owc-elasticsearch'),
-						'desc' => __('', 'owc-elasticsearch'),
-						'type' => 'text'
-					]
-				]
-			]
-		];
-
 		$configMetaboxes = $this->plugin->config->get('settings');
 
-		return array_merge($pdcBaseMetaboxes, $configMetaboxes);
+		$basePlugin->config->set('settings.elasticsearch', $configMetaboxes);
 	}
 }

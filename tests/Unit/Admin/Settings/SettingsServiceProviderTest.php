@@ -7,6 +7,7 @@ use OWC\Elasticsearch\Config;
 use OWC\Elasticsearch\Plugin\BasePlugin;
 use OWC\Elasticsearch\Plugin\Loader;
 use OWC\Elasticsearch\Tests\TestCase;
+use StdClass;
 
 class SettingsServiceProviderTest extends TestCase
 {
@@ -32,98 +33,38 @@ class SettingsServiceProviderTest extends TestCase
 
 		$service = new SettingsServiceProvider($plugin);
 
-		$plugin->loader->shouldReceive('addFilter')->withArgs([
-			'owc/pdc-base/config/settings',
+		$plugin->loader->shouldReceive('addAction')->withArgs([
+			'owc/pdc-base/plugin',
 			$service,
-			'addSettings'
+			'addTab',
+			10,
+			1
 		])->once();
 
-		$plugin->loader->shouldReceive('addFilter')->withArgs([
-			'owc/pdc-base/config/settings_pages',
+		$plugin->loader->shouldReceive('addAction')->withArgs([
+			'owc/pdc-base/plugin',
 			$service,
-			'addTab'
+			'addSettings',
+			10,
+			1
 		])->once();
 
 		$service->register();
 
 		$configMetaboxes = [
-			'elasticsearch' => [
-				'id'             => 'elasticsearch',
-				'settings_pages' => 'base_settings_page',
-				'tab'            => 'elasticsearch',
-				'fields'         => [
-					'elasticsearch' => [
-						'testfield_noid' => [
-							'type' => 'heading'
-						],
-						'testfield1'     => [
-							'id' => 'metabox_id1'
-						],
-						'testfield2'     => [
-							'id' => 'metabox_id2'
-						]
-					]
-				]
-			]
-
-		];
-
-		$existingMetaboxes = [
-			'base' => [
-				'id'             => 'metadata',
-				'settings_pages' => 'base_settings_page',
-				'tab'            => 'base',
-				'fields'         => [
-					'general' => [
-						'testfield_noid' => [
-							'type' => 'heading'
-						],
-						'testfield1'     => [
-							'id' => 'metabox_id1'
-						],
-						'testfield2'     => [
-							'id' => 'metabox_id2'
-						]
-					]
-				]
-			]
-		];
-
-		$expectedMetaboxesAfterMerge = [
-
-			'base'          => [
-				'id'             => 'metadata',
-				'settings_pages' => 'base_settings_page',
-				'tab'            => 'base',
-				'fields'         => [
-					'general' => [
-						'testfield_noid' => [
-							'type' => 'heading'
-						],
-						'testfield1'     => [
-							'id' => 'metabox_id1'
-						],
-						'testfield2'     => [
-							'id' => 'metabox_id2'
-						]
-					]
-				]
-			],
-			'elasticsearch' => [
-				'id'             => 'elasticsearch',
-				'settings_pages' => 'base_settings_page',
-				'tab'            => 'elasticsearch',
-				'fields'         => [
-					'elasticsearch' => [
-						'testfield_noid' => [
-							'type' => 'heading'
-						],
-						'testfield1'     => [
-							'id' => 'metabox_id1'
-						],
-						'testfield2'     => [
-							'id' => 'metabox_id2'
-						]
+			'id'             => 'elasticsearch',
+			'settings_pages' => 'base_settings_page',
+			'tab'            => 'elasticsearch',
+			'fields'         => [
+				'elasticsearch' => [
+					'testfield_noid' => [
+						'type' => 'heading'
+					],
+					'testfield1'     => [
+						'id' => 'metabox_id1'
+					],
+					'testfield2'     => [
+						'id' => 'metabox_id2'
 					]
 				]
 			]
@@ -131,41 +72,36 @@ class SettingsServiceProviderTest extends TestCase
 
 		$config->shouldReceive('get')->with('settings')->once()->andReturn($configMetaboxes);
 
-		$this->assertEquals($expectedMetaboxesAfterMerge, $service->addSettings($existingMetaboxes));
+		$basePlugin         = new StdClass();
+		$basePlugin->config = m::mock(Config::class);
 
-		$existingSettingsPages = [
-			'base' => [
+		$basePlugin->config->shouldReceive('set')->withArgs([
+			'settings.elasticsearch',
+			$configMetaboxes
+		])->once();
 
-				'id'   => 'pdc_base_settings',
-				'tabs' => [
-					'base' => 'Base'
-				]
-			]
-		];
+		$this->assertTrue(true);
 
-		$configSettingsPages = [
-			'base' => [
+		$service->addSettings($basePlugin);
 
-				'id'   => 'pdc_base_settings',
-				'tabs' => [
-					'elasticsearch' => 'Elasticsearch'
-				]
-			]
-		];
+		/**
+		 * Add Tab
+		 */
 
-		$expectedSettingsPages = [
-			'base' => [
+		$configSettingsPages = __('Elasticsearch', 'PDC settings tab', 'pdc-elasticsearch');
 
-				'id'   => 'pdc_base_settings',
-				'tabs' => [
-					'base' => 'Base',
-					'elasticsearch' => 'Elasticsearch'
-				]
-			]
-		];
+		$config->shouldReceive('get')->with('settings_pages.elasticsearch')->once()->andReturn($configSettingsPages);
 
-		$config->shouldReceive('get')->with('settings_pages')->once()->andReturn($configSettingsPages);
+		$basePlugin         = new \StdClass();
+		$basePlugin->config = m::mock(Config::class);
 
-		$this->assertEquals($expectedSettingsPages, $service->addTab($existingSettingsPages));
+		$basePlugin->config->shouldReceive('set')->withArgs([
+			'settings_pages.base.tabs.elasticsearch',
+			$configSettingsPages
+		])->once();
+
+		$this->assertTrue(true);
+
+		$service->addTab($basePlugin);
 	}
 }

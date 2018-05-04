@@ -115,7 +115,7 @@ class ElasticPressTest extends TestCase
 
 		$this->assertEquals($expected, $actual);
 
-		define('EP_INDEX_PREFIX', 'prefix');
+		define('EP_INDEX_PREFIX', 'prefix--');
 		putenv('environment=test');
 
 		$expected = 'prefix--owc-pdc--1--test';

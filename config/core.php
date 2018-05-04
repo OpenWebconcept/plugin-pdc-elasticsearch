@@ -31,8 +31,5 @@ return [
 		'frontend' => [
 
 		]
-	],
-	'settings'  => apply_filters('owc/owc-elasticsearch/settings', [
-
-	]),
+	]
 ];
