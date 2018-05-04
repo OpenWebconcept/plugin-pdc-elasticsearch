@@ -13,3 +13,4 @@ class PluginTest extends TestCase
 		$this->assertTrue(true);
 	}
 }
+
