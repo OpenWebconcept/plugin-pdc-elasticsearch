@@ -3,10 +3,7 @@
 namespace OWC\Elasticsearch\Plugin;
 
 use Exception;
-use OWC\Elasticsearch\Admin\Admin;
 use OWC\Elasticsearch\Config;
-use OWC\Elasticsearch\Frontend\Frontend;
-use OWC\Elasticsearch\Network\Network;
 
 abstract class BasePlugin
 {
@@ -44,15 +41,14 @@ abstract class BasePlugin
 	public function __construct($rootPath)
 	{
 		$this->rootPath = $rootPath;
+		$this->loadPluginTextdomain();
+
+		$this->loader = Loader::getInstance();
 
 		$this->config = new Config($this->rootPath . '/config');
 		$this->config->boot();
 
-		$this->loader = Loader::getInstance();
-
 		$this->bootServiceProviders('register');
-
-		$this->bootLanguages();
 
 		if ( is_network_admin() ) {
 			$this->bootServiceProviders('register', 'network');
@@ -68,6 +64,9 @@ abstract class BasePlugin
 		$this->bootServiceProviders('boot', is_admin() ? 'admin' : 'frontend');
 
 		$this->loader->register();
+
+		$this->addStartUpHooks();
+		$this->addTearDownHooks();
 	}
 
 	/**
@@ -78,7 +77,7 @@ abstract class BasePlugin
 	 *
 	 * @throws Exception
 	 */
-	private function bootServiceProviders($method = '', $location = '')
+	public function bootServiceProviders($method = '', $location = '')
 	{
 		$suffix   = $location ? '.' . $location : '';
 		$services = $this->config->get('core.providers' . $suffix);
@@ -101,29 +100,31 @@ abstract class BasePlugin
 		}
 	}
 
+	public function loadPluginTextdomain()
+	{
+		load_plugin_textdomain($this->getName(), false, $this->getName() . '/languages/');
+	}
+
 	/**
 	 * Startup hooks to initialize the plugin.
 	 *
 	 * @param $file
 	 */
-	public static function addStartUpHooks($file)
+	public static function addStartUpHooks()
 	{
 		/**
 		 * This hook registers a plugin function to be run when the plugin is activated.
 		 */
-		register_activation_hook($file, [
-			'\OWC\Elasticsearch\Hooks',
-			'pluginActivation'
-		]);
+		register_activation_hook(__FILE__, ['\OWC\Elasticsearch\Hooks', 'pluginActivation']);
 
 		add_action('admin_notices', function() {
 			if ( get_transient('pdc-elasticsearch-plugin-actions-notice') ) {
 
-				get_option( '')
+				get_option('')
 				?>
-                <div class="updated notice is-dismissible">
-                    <p>Thank you for using this plugin! <strong>You are awesome</strong>.</p>
-                </div>
+				<div class="updated notice is-dismissible">
+					<p>Thank you for using this plugin! <strong>You are awesome</strong>.</p>
+				</div>
 				<?php delete_transient('pdc-elasticsearch-plugin-actions-notice');
 			}
 		});
@@ -132,10 +133,7 @@ abstract class BasePlugin
 		 * This hook is run immediately after any plugin is activated, and may be used to detect the activation of plugins.
 		 * If a plugin is silently activated (such as during an update), this hook does not fire.
 		 */
-		add_action('activated_plugin', [
-			'\OWC\Elasticsearch\Hooks',
-			'pluginActivated'
-		], 10, 2);
+		add_action('activated_plugin', ['\OWC\Elasticsearch\Hooks', 'pluginActivated'], 10, 2);
 	}
 
 	/**
@@ -143,15 +141,12 @@ abstract class BasePlugin
 	 *
 	 * @param $file
 	 */
-	public static function addTearDownHooks($file)
+	public static function addTearDownHooks()
 	{
 		/**
 		 * This hook registers a plugin function to be run when the plugin is deactivated.
 		 */
-		register_deactivation_hook($file, [
-			'\OWC\Elasticsearch\Hooks',
-			'pluginDeactivation'
-		]);
+		register_deactivation_hook(__FILE__, ['\OWC\Elasticsearch\Hooks', 'pluginDeactivation']);
 
 		/**
 		 * This hook is run immediately after any plugin is deactivated, and may be used to detect the deactivation of other plugins.
@@ -162,10 +157,7 @@ abstract class BasePlugin
 		 * Registers the uninstall hook that will be called when the user clicks on the uninstall link that calls for the plugin to uninstall itself.
 		 * The link won’t be active unless the plugin hooks into the action.
 		 */
-		register_uninstall_hook($file, [
-			'\OWC\Elasticsearch\Hooks',
-			'uninstallPlugin'
-		]);
+		register_uninstall_hook(__FILE__, ['\OWC\Elasticsearch\Hooks', 'uninstallPlugin']);
 	}
 
 	/**
@@ -189,25 +181,12 @@ abstract class BasePlugin
 	}
 
 	/**
-	 * Add language file.
-	 */
-	private function bootLanguages()
-	{
-		load_plugin_textdomain(
-			'owc-elasticsearch',
-			false,
-			dirname(dirname(plugin_basename(__FILE__))) . '/languages/'
-		);
-	}
-
-	/**
-	 * Return root path of plugin.
+	 * Set the action for the plugin.
 	 *
-	 * @return string
+	 * @return void
 	 */
-	public function getRootPath()
+	public function addActionPlugin()
 	{
-		return $this->rootPath;
+		do_action('owc/' . $this->getName() . '/plugin', $this);
 	}
-
 }

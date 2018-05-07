@@ -12,72 +12,33 @@ class SettingsServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-		$this->plugin->loader->addFilter('owc/pdc_base/config/settings_pages', $this, 'addTab', 10, 1);
-		$this->plugin->loader->addFilter('owc/pdc_base/config/settings', $this, 'addSettings', 10, 1);
+		$this->plugin->loader->addAction('owc/pdc-base/plugin', $this, 'addTab', 10, 1);
+		$this->plugin->loader->addAction('owc/pdc-base/plugin', $this, 'addSettings', 10, 1);
 	}
 
 	/**
-	 * Register the service provider.
-	 */
-	public function boot()
-	{
-		// TODO: Implement register() method.
-	}
-
-	/**
-	 * @param $settings
+	 * @param $basePlugin
 	 *
-	 * @return array
+	 * @return void
 	 */
-	public function addTab($settings)
+	public function addTab($basePlugin)
 	{
-		$settings['base']['tabs']['elasticsearch'] = __('Elasticsearch', '');
+		$configMetaboxes = $this->plugin->config->get('settings_pages.elasticsearch');
 
-		return $settings;
+		$basePlugin->config->set('settings_pages.base.tabs.elasticsearch', $configMetaboxes);
 	}
 
 	/**
 	 * Register metaboxes for settings page
 	 *
-	 * @param $metaboxes
+	 * @param $basePlugin
 	 *
-	 * @return array
+	 * @return void
 	 */
-	public function addSettings($metaboxes)
+	public function addSettings($basePlugin)
 	{
-		$configMetaboxes = [
-			'elasticsearch' => [
-				'id'             => 'elasticsearch',
-				'title'          => __('Elasticsearch', 'owc-elasticsearch'),
-				'settings_pages' => '_owc_pdc_base_settings',
-				'tab'            => 'elasticsearch',
-				'fields'         => [
-					'elasticsearch' => [
-						'url'    => [
-							'id'   => 'setting_elasticsearch_url',
-							'name' => __('Instance url', 'owc-elasticsearch'),
-							'desc' => __('URL inclusief http(s)://', 'owc-elasticsearch'),
-							'type' => 'text'
-						],
-						'shield' => [
-							'id'   => 'setting_elasticsearch_shield',
-							'name' => __('Instance shield', 'owc-elasticsearch'),
-							'desc' => __('URL inclusief http(s)://', 'owc-elasticsearch'),
-							'type' => 'text'
-						],
-						'prefix' => [
-							'id'   => 'setting_elasticsearch_prefix',
-							'name' => __('Instance prefix', 'owc-elasticsearch'),
-							'desc' => __('', 'owc-elasticsearch'),
-							'type' => 'text'
-						]
-					]
-				]
-			]
-		];
+		$configMetaboxes = $this->plugin->config->get('settings');
 
-		$configMetaboxes = array_merge($metaboxes, $configMetaboxes);
-
-		return $configMetaboxes;
+		$basePlugin->config->set('settings.elasticsearch', $configMetaboxes);
 	}
 }

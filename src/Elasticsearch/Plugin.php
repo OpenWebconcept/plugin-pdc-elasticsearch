@@ -20,7 +20,7 @@ class Plugin extends BasePlugin
 	 *
 	 * @var string
 	 */
-	const VERSION = '1.0.0';
+	const VERSION = '0.1';
 
 	/**
 	 * Boot the plugin.
@@ -28,7 +28,14 @@ class Plugin extends BasePlugin
 	 */
 	public function boot()
 	{
+		$this->config->setProtectedNodes(['core']);
+		$this->config->boot();
 
+		$this->bootServiceProviders();
+
+		$this->loader->addAction('init', $this, 'addActionPlugin', 9);
+
+		$this->loader->register();
 	}
 
 	/**
