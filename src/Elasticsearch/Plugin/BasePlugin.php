@@ -54,14 +54,18 @@ abstract class BasePlugin
 			$this->bootServiceProviders('register', 'network');
 		}
 
-		$this->bootServiceProviders('register', is_admin() ? 'admin' : 'frontend');
+		if ( is_admin() || ( defined('WP_CLI') && WP_CLI ) ) {
+			$this->bootServiceProviders('register', 'admin');
+		}
 
 		$this->bootServiceProviders('boot');
 		if ( is_network_admin() ) {
 			$this->bootServiceProviders('boot', 'network');
 		}
 
-		$this->bootServiceProviders('boot', is_admin() ? 'admin' : 'frontend');
+		if ( is_admin() || ( defined('WP_CLI') && WP_CLI ) ) {
+			$this->bootServiceProviders('boot', 'admin');
+		}
 
 		$this->loader->register();
 
