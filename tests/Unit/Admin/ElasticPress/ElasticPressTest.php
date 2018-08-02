@@ -8,6 +8,7 @@ use OWC\Elasticsearch\Config;
 use OWC\Elasticsearch\Plugin\BasePlugin;
 use OWC\Elasticsearch\Plugin\Loader;
 use OWC\Elasticsearch\Tests\TestCase;
+use WP_Mock;
 
 class ElasticPressTest extends TestCase
 {
@@ -29,11 +30,11 @@ class ElasticPressTest extends TestCase
 
 	public function setUp()
 	{
-		\WP_Mock::setUp();
+		WP_Mock::setUp();
 
 		$this->config = m::mock(Config::class);
 
-		$this->plugin         = m::mock(BasePlugin::class);
+		$this->plugin = m::mock(BasePlugin::class);
 		$this->plugin->config = $this->config;
 		$this->plugin->loader = m::mock(Loader::class);
 
@@ -42,7 +43,7 @@ class ElasticPressTest extends TestCase
 
 	public function tearDown()
 	{
-		\WP_Mock::tearDown();
+		WP_Mock::tearDown();
 	}
 
 	/** @test */
@@ -50,7 +51,7 @@ class ElasticPressTest extends TestCase
 	{
 		$this->plugin->config->shouldReceive('get')->with('elasticpress.language')->andReturn('dutch');
 
-		\WP_Mock::expectFilterAdded('ep_analyzer_language', function($language, $analyzer) {
+		WP_Mock::expectFilterAdded('ep_analyzer_language', function ($language, $analyzer) {
 
 			return $language;
 		}, 10, 2);
@@ -65,10 +66,9 @@ class ElasticPressTest extends TestCase
 	{
 		$this->plugin->config->shouldReceive('get')->with('elasticpress.indexables')->andReturn([]);
 
-		\WP_Mock::expectFilterAdded('ep_indexable_post_types', function($post_types) {
-
+		WP_Mock::expectFilterAdded('ep_indexable_post_types', function ($post_types) {
 			return $post_types;
-		}, 10, 1);
+		}, 11, 1);
 
 		$this->service->setIndexables();
 
@@ -78,7 +78,7 @@ class ElasticPressTest extends TestCase
 	/** @test */
 	public function it_sets_the_correct_post_args_for_syncing()
 	{
-		\WP_Mock::expectFilterAdded('ep_post_sync_args', function($postArgs, $postID) {
+		WP_Mock::expectFilterAdded('ep_post_sync_args', function ($postArgs, $postID) {
 
 			return $postArgs;
 		}, 10, 2);
@@ -92,26 +92,26 @@ class ElasticPressTest extends TestCase
 	public function it_sets_the_correct_index_name()
 	{
 		$indexName = 'test';
-		$siteID    = 1;
+		$siteID = 1;
 
 		putenv('environment=development');
 
-		$expected  = 'owc-pdc--1--development';
-		$actual    = $this->service->setIndexNameByEnvironment($indexName, $siteID);
+		$expected = 'owc-pdc--1--development';
+		$actual = $this->service->setIndexNameByEnvironment($indexName, $siteID);
 
 		$this->assertEquals($expected, $actual);
 
 		putenv('environment=test');
 
 		$expected = 'owc-pdc--1--test';
-		$actual   = $this->service->setIndexNameByEnvironment($indexName, $siteID);
+		$actual = $this->service->setIndexNameByEnvironment($indexName, $siteID);
 
 		$this->assertEquals($expected, $actual);
 
 		putenv('environment=');
 
 		$expected = 'owc-pdc--1';
-		$actual   = $this->service->setIndexNameByEnvironment($indexName, $siteID);
+		$actual = $this->service->setIndexNameByEnvironment($indexName, $siteID);
 
 		$this->assertEquals($expected, $actual);
 
@@ -119,7 +119,7 @@ class ElasticPressTest extends TestCase
 		putenv('environment=test');
 
 		$expected = 'prefix--owc-pdc--1--test';
-		$actual   = $this->service->setIndexNameByEnvironment($indexName, $siteID);
+		$actual = $this->service->setIndexNameByEnvironment($indexName, $siteID);
 
 		$this->assertEquals($expected, $actual);
 	}
@@ -128,25 +128,50 @@ class ElasticPressTest extends TestCase
 	public function it_transforms_the_post_args_to_required_format()
 	{
 
-		$postIDStub   = 1;
+		$postIDStub = 1;
+		WP_Mock::userFunction('is_wp_error', [
+			'return' => false
+		]);
+
+		$termStub1 = new \StdClass();
+		$termStub1->name = 'test 2';
+
+		$termStub2 = new \StdClass();
+		$termStub2->name = 'test 3';
+
+		WP_Mock::userFunction('wp_get_post_terms', [
+			'return' => [
+				$termStub1,
+				$termStub2,
+			]
+		]);
+
 		$postArgsStub = [
-			'post_id'           => $postIDStub,
-			'ID'                => $postIDStub,
-			'post_author'       => '',
-			'post_date'         => '',
-			'post_date_gmt'     => '',
-			'post_title'        => '',
-			'post_excerpt'      => '',
-			'post_content'      => '',
-			'post_status'       => '',
-			'post_name'         => '',
-			'post_modified'     => '',
+			'post_id' => $postIDStub,
+			'ID' => $postIDStub,
+			'post_author' => [
+				'login' => '',
+				'display_name' => '',
+				'raw' => ''
+			],
+			'post_date' => '',
+			'post_date_gmt' => '',
+			'post_title' => '',
+			'post_excerpt' => '',
+			'post_content' => '',
+			'post_status' => '',
+			'post_name' => '',
+			'post_modified' => '',
 			'post_modified_gmt' => '',
-			'post_parent'       => '',
-			'post_type'         => '',
-			'post_mime_type'    => '',
-			'permalink'         => '',
-			'guid'              => ''
+			'post_parent' => '',
+			'post_type' => '',
+			'post_mime_type' => '',
+			'permalink' => '',
+			'guid' => '',
+			'meta' => [],
+			'post_meta' => [
+				'terms' => ''
+			]
 		];
 
 		$actual = $this->invokeMethod($this->service, 'transform', [
@@ -155,24 +180,32 @@ class ElasticPressTest extends TestCase
 		]);
 
 		$expected = [
-			'post_id'           => $postIDStub,
-			'ID'                => $postIDStub,
-			'post_date'         => '',
-			'post_date_gmt'     => '',
-			'post_title'        => '',
-			'post_excerpt'      => '',
-			'post_content'      => '',
-			'post_status'       => '',
-			'post_name'         => '',
-			'post_modified'     => '',
+			'post_id' => $postIDStub,
+			'ID' => $postIDStub,
+			'post_author' => [
+				'login' => '',
+				'display_name' => '',
+				'raw' => ''
+			],
+			'post_date' => '',
+			'post_date_gmt' => '',
+			'post_title' => '',
+			'post_excerpt' => '',
+			'post_content' => '',
+			'post_status' => '',
+			'post_name' => '',
+			'post_modified' => '',
 			'post_modified_gmt' => '',
-			'post_parent'       => '',
-			'post_type'         => '',
-			'post_mime_type'    => '',
-			'permalink'         => '',
-			'guid'              => '',
-			'meta'              => [],
-			'terms'             => [],
+			'post_parent' => '',
+			'post_type' => '',
+			'post_mime_type' => '',
+			'permalink' => '',
+			'guid' => '',
+			'meta' => [],
+			'terms' => [],
+			'post_meta' => [
+				'terms' => 'test 2,test 3,test 2,test 3'
+			]
 		];
 
 		$this->assertEquals($expected, $actual);

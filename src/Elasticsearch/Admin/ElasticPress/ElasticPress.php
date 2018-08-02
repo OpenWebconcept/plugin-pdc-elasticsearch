@@ -125,7 +125,6 @@ class ElasticPress
 		foreach ( $taxonomies_data as $taxonomy_data ) {
 
 			$terms = wp_get_post_terms( $postID, $taxonomy_data['taxonomy_id']);
-
 			if ( ! is_wp_error($terms) ) {
 
 				foreach ( $terms as $term ) {
