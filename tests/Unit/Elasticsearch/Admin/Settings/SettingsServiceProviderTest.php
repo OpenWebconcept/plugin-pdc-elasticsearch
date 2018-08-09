@@ -1,12 +1,13 @@
 <?php
 
-namespace OWC\Elasticsearch\Admin\Settings;
+namespace OWC\PDC\Elasticsearch\Admin\Settings;
 
 use Mockery as m;
-use OWC\Elasticsearch\Config;
-use OWC\Elasticsearch\Plugin\BasePlugin;
-use OWC\Elasticsearch\Plugin\Loader;
-use OWC\Elasticsearch\Tests\TestCase;
+use OWC\PDC\Base\Foundation\Config;
+use OWC\PDC\Base\Foundation\Loader;
+use OWC\PDC\Base\Foundation\Plugin;
+use OWC\PDC\Elasticsearch\Admin\Settings\SettingsServiceProvider;
+use OWC\PDC\Elasticsearch\Tests\Unit\TestCase;
 use StdClass;
 
 class SettingsServiceProviderTest extends TestCase
@@ -26,7 +27,7 @@ class SettingsServiceProviderTest extends TestCase
 	public function check_registration_of_settings_metaboxes()
 	{
 		$config = m::mock(Config::class);
-		$plugin = m::mock(BasePlugin::class);
+		$plugin = m::mock(Plugin::class);
 
 		$plugin->config = $config;
 		$plugin->loader = m::mock(Loader::class);

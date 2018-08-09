@@ -2,17 +2,19 @@
 
 /**
  * PHPUnit bootstrap file
+ *
+ * @package OWC\PDC\Elasticsearch
  */
 
 /**
  * Load dependencies with Composer autoloader.
  */
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../../vendor/autoload.php';
 
 /**
  * Bootstrap WordPress Mock.
  */
-\WP_Mock::setUsePatchwork(true);
+\WP_Mock::setUsePatchwork( true );
 \WP_Mock::bootstrap();
 
 $GLOBALS['pdc-elasticsearch'] = [

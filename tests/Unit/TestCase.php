@@ -1,6 +1,6 @@
 <?php
 
-namespace OWC\Elasticsearch\Tests;
+namespace OWC\PDC\Elasticsearch\Tests\Unit;
 
 use PHPUnit\Framework\TestCase as PHPUnit;
 

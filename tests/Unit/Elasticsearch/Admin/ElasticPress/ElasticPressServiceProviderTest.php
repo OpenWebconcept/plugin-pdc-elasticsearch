@@ -1,26 +1,26 @@
 <?php
 
-namespace OWC\Elasticsearch\Tests\ElasticPress;
+namespace OWC\PDC\Elasticsearch\Admin\ElasticPress;
 
 use Exception;
 use Mockery as m;
-use OWC\Elasticsearch\Admin\ElasticPress\ElasticPressServiceProvider;
-use OWC\Elasticsearch\Config;
-use OWC\Elasticsearch\Plugin\BasePlugin;
-use OWC\Elasticsearch\Plugin\Loader;
-use OWC\Elasticsearch\Tests\TestCase;
+use OWC\PDC\Base\Foundation\Config;
+use OWC\PDC\Base\Foundation\Loader;
+use OWC\PDC\Base\Foundation\Plugin;
+use OWC\PDC\Elasticsearch\Admin\ElasticPress\ElasticPressServiceProvider;
+use OWC\PDC\Elasticsearch\Tests\Unit\TestCase;
 use WP_Mock;
 
 class ElasticPressServiceProviderTest extends TestCase
 {
 
 	/**
-	 * @var ElasticPressServiceProvider
+	 * @var ElasticPressServiceProvider $service
 	 */
 	protected $service;
 
 	/**
-	 * @var
+	 * @var Config
 	 */
 	protected $config;
 
@@ -35,7 +35,7 @@ class ElasticPressServiceProviderTest extends TestCase
 
 		$this->config = m::mock(Config::class);
 
-		$this->plugin         = m::mock(BasePlugin::class);
+		$this->plugin         = m::mock(Plugin::class);
 		$this->plugin->config = $this->config;
 		$this->plugin->loader = m::mock(Loader::class);
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace OWC\Elasticsearch\Admin\Settings;
+namespace OWC\PDC\Elasticsearch\Admin\Settings;
 
-use OWC\Elasticsearch\Plugin\ServiceProvider;
+use OWC\PDC\Base\Foundation\ServiceProvider;
 
 class SettingsServiceProvider extends ServiceProvider
 {
