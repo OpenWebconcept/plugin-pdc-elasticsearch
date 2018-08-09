@@ -15,7 +15,7 @@ There are various [hooks](https://codex.wordpress.org/Plugin_API/Hooks), which a
 'owc/pdc-elasticsearch/plugin'
 ```
 
-See OWC\Elasticsearch\Config->set method for a way to change this plugins config.
+See OWC\PDC\Base\Foundation\Config->set method for a way to change this plugins config.
 
 Via the plugin object the following config settings can be adjusted
 - metaboxes

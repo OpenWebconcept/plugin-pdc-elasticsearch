@@ -1,18 +1,18 @@
 <?php
 
-namespace OWC\Elasticsearch\Admin\ElasticPress;
+namespace OWC\PDC\Elasticsearch\Admin\ElasticPress;
 
 class ElasticPress
 {
 	/**
-	 * @var \OWC\Elasticsearch\Config
+	 * @var \OWC\PDC\Base\Foundation\Config
 	 */
 	private $config;
 
 	/**
 	 * ElasticPress constructor.
 	 *
-	 * @param \OWC\Elasticsearch\Config $config
+	 * @param \OWC\PDC\Base\Foundation\Config $config
 	 */
 	public function __construct($config)
 	{

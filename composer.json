@@ -1,42 +1,44 @@
 {
   "name": "plugin/pdc-elasticsearch",
-  "description": "PDC Elasticsearch",
-  "homepage": "https://www.yardinternet.nl",
+  "description": "PDC Elasticsearch plugin",
   "authors": [
     {
       "name": "Yard Internet",
-      "email": "info@yard.nl"
+      "email": "info@yard.nl",
+      "homepage": "https://www.yardinternet.nl"
     }
   ],
   "type": "wordpress-plugin",
   "repositories": [
     {
-      "type": "composer",
-      "url": "https://wpackagist.org"
+      "type": "vcs",
+      "url": "git@bitbucket.org:openwebconcept/plugin-pdc-base.git"
     }
   ],
   "require": {
     "php": ">=7.0",
-    "wpackagist-plugin/elasticpress": "2.5.*"
+    "plugin/pdc-base": "dev-master"
   },
   "require-dev": {
-    "mockery/mockery": "~1.0",
+    "mockery/mockery": "1.0.*",
     "phpunit/phpunit": "~7.0",
-    "10up/wp_mock": "dev-master"
+    "10up/wp_mock": "dev-master",
+    "phpdocumentor/phpdocumentor": "2.*"
   },
   "autoload-dev": {
     "psr-4": {
-      "OWC\\Elasticsearch\\": "./src/Elasticsearch",
-      "OWC\\Elasticsearch\\Tests\\": "./tests"
+      "OWC\\PDC\\Elasticsearch\\": "./src/Elasticsearch",
+      "OWC\\PDC\\Elasticsearch\\Tests\\": "./tests"
     }
   },
   "scripts": {
     "unit": "clear && ./vendor/bin/phpunit  --testsuite 'Unit Test Suite' --colors=always",
-    "unit-cover": "clear && ./vendor/bin/phpunit  --testsuite 'Unit Test Suite' --colors=always --coverage-html ./tests/coverage",
+    "unit-coverage": "clear && ./vendor/bin/phpunit  --testsuite 'Unit Test Suite' --colors=always --coverage-html ./tests/coverage",
     "integration": "clear && ./vendor/bin/phpunit  --testsuite 'Integration Test Suite' --colors=always",
     "test": [
       "@unit",
       "@integration"
-    ]
+    ],
+    "docs": "./vendor/bin/phpdoc -d ./src/Elasticsearch -t ./docs"
   }
 }
