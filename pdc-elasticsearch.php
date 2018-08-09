@@ -7,7 +7,7 @@
  * Plugin URI:        https://www.yardinternet.nl
  * Description:       Core of PDC Elasticsearch
  * Version:           0.1
- * Author:            Edwin Siebel, Ruud Laan
+ * Author:            Yard Internet
  * Author URI:        https://www.yardinternet.nl/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt

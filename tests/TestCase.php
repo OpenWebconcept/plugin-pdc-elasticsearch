@@ -4,7 +4,7 @@ namespace OWC\Elasticsearch\Tests;
 
 use PHPUnit\Framework\TestCase as PHPUnit;
 
-class TestCase extends PHPUnit
+abstract class TestCase extends PHPUnit
 {
 	/**
 	 * Call protected/private method of a class.

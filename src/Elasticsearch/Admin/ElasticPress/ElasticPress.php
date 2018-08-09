@@ -25,19 +25,51 @@ class ElasticPress
 	public function initElasticPress()
 	{
 		$this->setIndexables();
+		$this->setStatuses();
+		$this->setIndexPostsArgs();
 		$this->setLanguage();
 		$this->setPostSyncArgs();
 	}
 
 	/**
-	 * Filters the posttypes which gets indexed in the ElasticSearch instance
+	 * Sets the filter to modify the posttypes which gets indexed in the ElasticSearch instance
 	 */
 	public function setIndexables()
 	{
 		$indexablesFromConfig = $this->config->get('elasticpress.indexables');
 		add_filter('ep_indexable_post_types', function($post_types) use ($indexablesFromConfig) {
 			return $indexablesFromConfig;
+		}, 11, 1);
+	}
+
+	/**
+	 * Sets additional meta_query information to further determine which posts gets indexed in the ElasticSearch instance
+	 */
+	public function setIndexPostsArgs()
+	{
+
+		add_filter('ep_index_posts_args', function($args) {
+
+			$args['meta_query'] = [
+				[
+					'key'     => '_owc_pdc_active',
+					'value'   => 1,
+					'compare' => '=',
+				]
+			];
+
+			return $args;
 		}, 10, 1);
+	}
+
+	/**
+	 * Filters the post statuses for indexation by elasticPress
+	 */
+	public function setStatuses()
+	{
+		add_filter('ep_indexable_post_status', function($statuses) {
+			return ['publish'];
+		}, 11, 1);
 	}
 
 	/**
@@ -75,14 +107,32 @@ class ElasticPress
 	{
 		$postArgs['post_author'] = isset($postArgs['post_author']) ? $postArgs['post_author'] : '';
 		if ( apply_filters('owc/pdc-elasticsearch/elasticpress/postargs/remote-author', true, $postID) ) {
-			unset($postArgs['post_author']);
+			$postArgs['post_author']['raw'] = $postArgs['post_author']['display_name'] = $postArgs['post_author']['login'] = '';
 		}
 
-		$postArgs['meta'] = isset($postArgs['meta']) ? $postArgs['meta'] : [];
-		$postArgs['meta'] = apply_filters('owc/pdc-elasticsearch/elasticpress/postargs/meta', $postArgs['meta'], $postID);
+		$postArgs['post_meta'] = isset($postArgs['post_meta']) ? $postArgs['post_meta'] : [];
+		$postArgs['post_meta'] = apply_filters('owc/pdc-elasticsearch/elasticpress/postargs/meta', $postArgs['post_meta'], $postID);
 
 		$postArgs['terms'] = isset($postArgs['terms']) ? $postArgs['terms'] : [];
 		$postArgs['terms'] = apply_filters('owc/pdc-elasticsearch/elasticpress/postargs/terms', $postArgs['terms'], $postID);
+
+		//adding pdc-item taxonomies as 'post_meta.terms' field, filled with concatenated term names.
+		$taxonomies_data = [
+			['taxonomy_id' => 'pdc-type'],
+			['taxonomy_id' => 'pdc-doelgroep']
+		];
+		$collected_terms = [];
+		foreach ( $taxonomies_data as $taxonomy_data ) {
+
+			$terms = wp_get_post_terms( $postID, $taxonomy_data['taxonomy_id']);
+			if ( ! is_wp_error($terms) ) {
+
+				foreach ( $terms as $term ) {
+					$collected_terms[] = $term->name;
+				}
+			}
+		}
+		$postArgs['post_meta']['terms'] = implode( ',', $collected_terms );
 
 		$postArgs = apply_filters('owc/pdc-elasticsearch/elasticpress/postargs/all', $postArgs, $postID);
 
@@ -97,21 +147,21 @@ class ElasticPress
 
 		$settings = $this->getSettings();
 
-		if ( isset($settings['setting_elasticsearch_url']) && ( ! defined('EP_HOST') ) ) {
+		if ( isset($settings['_owc_setting_elasticsearch_url']) && ( ! defined('EP_HOST') ) ) {
 
-			if ( isset($settings['setting_elasticsearch_shield']) && ( ! defined('ES_SHIELD') ) ) {
-				define('ES_SHIELD', $settings['setting_elasticsearch_shield']);
+			if ( isset($settings['_owc_setting_elasticsearch_shield']) && ( ! defined('ES_SHIELD') ) ) {
+				define('ES_SHIELD', $settings['_owc_setting_elasticsearch_shield']);
 			}
 
-			$url = parse_url($settings['setting_elasticsearch_url']);
+			$url = parse_url($settings['_owc_setting_elasticsearch_url']);
 			define('EP_HOST', $url['scheme'] . '://' . ES_SHIELD . '@' . $url['host'] . '/');
 
 			update_option('ep_host', EP_HOST);
 
 		}
 
-		if ( isset($settings['setting_elasticsearch_prefix']) && ( ! defined('EP_INDEX_PREFIX') ) ) {
-			define('EP_INDEX_PREFIX', $settings['setting_elasticsearch_prefix']);
+		if ( isset($settings['_owc_setting_elasticsearch_prefix']) && ( ! defined('EP_INDEX_PREFIX') ) ) {
+			define('EP_INDEX_PREFIX', $settings['_owc_setting_elasticsearch_prefix']);
 		}
 
 		add_filter('ep_index_name', [$this, 'setIndexNameByEnvironment'], 10, 2);
