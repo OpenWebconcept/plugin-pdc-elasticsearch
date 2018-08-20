@@ -1,9 +1,15 @@
 <?php
+/**
+ * Provider to register the settings in the admin.
+ */
 
 namespace OWC\PDC\Elasticsearch\Admin\Settings;
 
 use OWC\PDC\Base\Foundation\ServiceProvider;
 
+/**
+ * Provider to register the settings in the admin.
+ */
 class SettingsServiceProvider extends ServiceProvider
 {
 
@@ -17,6 +23,8 @@ class SettingsServiceProvider extends ServiceProvider
 	}
 
 	/**
+	 * Inject the PDC Base plugin to be used to inject settings into the config.
+	 *
 	 * @param $basePlugin
 	 *
 	 * @return void
@@ -29,7 +37,7 @@ class SettingsServiceProvider extends ServiceProvider
 	}
 
 	/**
-	 * Register metaboxes for settings page
+	 * Register metaboxes for settings page.
 	 *
 	 * @param $basePlugin
 	 *
