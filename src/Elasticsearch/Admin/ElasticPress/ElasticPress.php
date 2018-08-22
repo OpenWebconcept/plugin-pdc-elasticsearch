@@ -176,14 +176,13 @@ class ElasticPress
 			$url = parse_url($settings['_owc_setting_elasticsearch_url']);
 
 			$epHost[] = $url['scheme'] .'://';
-			$epHost[] = defined('ES_SHIELD') ? define('ES_SHIELD') .'@' : '';
+			$epHost[] = defined('ES_SHIELD') ? ES_SHIELD .'@' : '';
 			$epHost[] = $url['host'];
 			$epHost[] = !empty( $url['port'] ) ? ':'. $url['port'] : '';
 			$epHost[] = '/';
 			define('EP_HOST', implode('', $epHost));
 
 			update_option('ep_host', EP_HOST);
-
 		}
 
 		if ( isset($settings['_owc_setting_elasticsearch_prefix']) && ( ! defined('EP_INDEX_PREFIX') ) ) {
