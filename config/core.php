@@ -14,8 +14,8 @@ return [
 		 * Providers specific to the admin.
 		 */
 		'admin'    => [
-			OWC\PDC\Elasticsearch\Admin\Settings\SettingsServiceProvider::class,
-			OWC\PDC\Elasticsearch\ElasticPress\ElasticPressServiceProvider::class,
+			OWC\PDC\Elasticsearch\Admin\ElasticPress\ElasticPressServiceProvider::class,
+			OWC\PDC\Elasticsearch\Admin\Settings\SettingsServiceProvider::class
 		],
 
 		/**

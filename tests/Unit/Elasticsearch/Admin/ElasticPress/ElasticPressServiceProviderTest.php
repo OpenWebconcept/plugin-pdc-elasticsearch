@@ -62,6 +62,6 @@ class ElasticPressServiceProviderTest extends TestCase
 		$this->expectException(Exception::class);
 		$this->expectExceptionMessage('Plugin ElasticPress should be installed and active to run this plugin');
 
-		$this->service->boot();
+		$this->service->register();
 	}
 }

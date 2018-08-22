@@ -1,9 +1,15 @@
 <?php
+/**
+ * Provider which registers the ElasticPress specific settings.
+ */
 
 namespace OWC\PDC\Elasticsearch\Admin\ElasticPress;
 
 use OWC\PDC\Base\Foundation\ServiceProvider;
 
+/**
+ * Provider which registers the ElasticPress specific settings.
+ */
 class ElasticPressServiceProvider extends ServiceProvider
 {
 
