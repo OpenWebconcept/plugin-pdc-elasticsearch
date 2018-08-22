@@ -1,9 +1,15 @@
 <?php
+/**
+ * Provider which registers the ElasticPress specific settings.
+ */
 
-namespace OWC\Elasticsearch\Admin\ElasticPress;
+namespace OWC\PDC\Elasticsearch\Admin\ElasticPress;
 
-use OWC\Elasticsearch\Plugin\ServiceProvider;
+use OWC\PDC\Base\Foundation\ServiceProvider;
 
+/**
+ * Provider which registers the ElasticPress specific settings.
+ */
 class ElasticPressServiceProvider extends ServiceProvider
 {
 
@@ -12,16 +18,7 @@ class ElasticPressServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-
-	}
-
-	/**
-	 * Register the service provider
-	 * @throws \Exception
-	 */
-	public function boot()
-	{
-		if ( ! is_plugin_active('elasticpress/elasticpress.php') ) {
+		if (!is_plugin_active('elasticpress/elasticpress.php')) {
 			throw new \Exception('Plugin ElasticPress should be installed and active to run this plugin');
 		}
 

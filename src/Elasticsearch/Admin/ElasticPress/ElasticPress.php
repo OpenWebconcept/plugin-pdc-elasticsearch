@@ -1,18 +1,26 @@
 <?php
+/**
+ * Provider which set up the ElasticPress specific settings.
+ */
 
-namespace OWC\Elasticsearch\Admin\ElasticPress;
+namespace OWC\PDC\Elasticsearch\Admin\ElasticPress;
 
+/**
+ * Provider which set up the ElasticPress specific settings.
+ */
 class ElasticPress
 {
 	/**
-	 * @var \OWC\Elasticsearch\Config
+	 * Config of the PDC Base plugin.
+	 *
+	 * @var \OWC\PDC\Base\Foundation\Config
 	 */
 	private $config;
 
 	/**
 	 * ElasticPress constructor.
 	 *
-	 * @param \OWC\Elasticsearch\Config $config
+	 * @param \OWC\PDC\Base\Foundation\Config $config
 	 */
 	public function __construct($config)
 	{
@@ -21,6 +29,8 @@ class ElasticPress
 
 	/**
 	 * Initialize ElasticPress integration.
+	 *
+	 * @return void
 	 */
 	public function initElasticPress()
 	{
@@ -32,7 +42,9 @@ class ElasticPress
 	}
 
 	/**
-	 * Sets the filter to modify the posttypes which gets indexed in the ElasticSearch instance
+	 * Sets the filter to modify the posttypes which gets indexed in the ElasticSearch instance.
+	 *
+	 * @return void
 	 */
 	public function setIndexables()
 	{
@@ -64,6 +76,8 @@ class ElasticPress
 
 	/**
 	 * Filters the post statuses for indexation by elasticPress
+	 *
+	 * @return void
 	 */
 	public function setStatuses()
 	{
@@ -74,6 +88,8 @@ class ElasticPress
 
 	/**
 	 * Set the language for the ES instance.
+	 *
+	 * @return void
 	 */
 	public function setLanguage()
 	{
@@ -85,6 +101,8 @@ class ElasticPress
 
 	/**
 	 * Set the args of the post which is synced to the instance.
+	 *
+	 * @return void
 	 */
 	public function setPostSyncArgs()
 	{
@@ -125,7 +143,6 @@ class ElasticPress
 		foreach ( $taxonomies_data as $taxonomy_data ) {
 
 			$terms = wp_get_post_terms( $postID, $taxonomy_data['taxonomy_id']);
-
 			if ( ! is_wp_error($terms) ) {
 
 				foreach ( $terms as $term ) {
@@ -142,6 +159,8 @@ class ElasticPress
 
 	/**
 	 * Define all the necessary settings.
+	 *
+	  * @return void
 	 */
 	public function setSettings()
 	{
@@ -155,10 +174,15 @@ class ElasticPress
 			}
 
 			$url = parse_url($settings['_owc_setting_elasticsearch_url']);
-			define('EP_HOST', $url['scheme'] . '://' . ES_SHIELD . '@' . $url['host'] . '/');
+
+			$epHost[] = $url['scheme'] .'://';
+			$epHost[] = defined('ES_SHIELD') ? ES_SHIELD .'@' : '';
+			$epHost[] = $url['host'];
+			$epHost[] = !empty( $url['port'] ) ? ':'. $url['port'] : '';
+			$epHost[] = '/';
+			define('EP_HOST', implode('', $epHost));
 
 			update_option('ep_host', EP_HOST);
-
 		}
 
 		if ( isset($settings['_owc_setting_elasticsearch_prefix']) && ( ! defined('EP_INDEX_PREFIX') ) ) {
@@ -196,6 +220,8 @@ class ElasticPress
 	}
 
 	/**
+	 * Get the environment variable.
+	 *
 	 * @return array|false|string
 	 */
 	protected function getEnvironmentVariable()
@@ -204,6 +230,8 @@ class ElasticPress
 	}
 
 	/**
+	 * Return settings from database.
+	 *
 	 * @return array
 	 */
 	public function getSettings()

@@ -1,34 +1,30 @@
 <phpunit
-        bootstrap="tests/bootstrap.php"
-        backupGlobals="false"
-        backupStaticAttributes="false"
-        colors="true"
-        convertErrorsToExceptions="true"
-        convertNoticesToExceptions="true"
-        convertWarningsToExceptions="true"
-        processIsolation="false"
-        stopOnError="false"
-        stopOnFailure="false"
-        syntaxCheck="true"
-        verbose="true"
+	bootstrap="tests/Unit/bootstrap.php"
+	backupGlobals="false"
+	backupStaticAttributes="false"
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	processIsolation="false"
+	stopOnError="false"
+	stopOnFailure="false"
+	verbose="true"
 >
-    <testsuites>
-        <testsuite name="Unit Test">
-            <directory suffix="Test.php">./tests/Unit</directory>
-        </testsuite>
-        <testsuite name="Integration Test">
-            <directory suffix="Test.php">./tests/Integration</directory>
-        </testsuite>
-    </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./src/Elasticsearch</directory>
-            <exclude>
-                <directory>./vendor</directory>
-            </exclude>
-        </whitelist>
-    </filter>
-    <php>
-        <ini name="display_errors" value="true"/>
-    </php>
+	<testsuites>
+		<testsuite name="Unit Test Suite">
+			<directory suffix="Test.php">./tests/Unit</directory>
+		</testsuite>
+	</testsuites>
+	<filter>
+		<whitelist processUncoveredFilesFromWhitelist="false">
+			<directory suffix=".php">./src/Unit</directory>
+			<exclude>
+				<directory suffix=".php">./src/vendor</directory>
+			</exclude>
+		</whitelist>
+	</filter>
+	<php>
+		<ini name="display_errors" value="true"/>
+	</php>
 </phpunit>
