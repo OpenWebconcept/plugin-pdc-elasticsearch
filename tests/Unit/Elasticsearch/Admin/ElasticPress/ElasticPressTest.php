@@ -96,29 +96,34 @@ class ElasticPressTest extends TestCase
 
 		putenv('environment=development');
 
-		$expected = 'owc-pdc--1--development';
+		$expected = 'www.google.com--1--development';
+
+		WP_Mock::userFunction('get_site_url', [
+			'return' => 'http://www.google.com'
+		]);
+
 		$actual = $this->service->setIndexNameByEnvironment($indexName, $siteID);
 
 		$this->assertEquals($expected, $actual);
 
 		putenv('environment=test');
 
-		$expected = 'owc-pdc--1--test';
+		$expected = 'www.google.com--1--test';
 		$actual = $this->service->setIndexNameByEnvironment($indexName, $siteID);
 
 		$this->assertEquals($expected, $actual);
 
 		putenv('environment=');
 
-		$expected = 'owc-pdc--1';
+		$expected = 'www.google.com--1';
 		$actual = $this->service->setIndexNameByEnvironment($indexName, $siteID);
 
 		$this->assertEquals($expected, $actual);
 
-		define('EP_INDEX_PREFIX', 'prefix--');
+		define('EP_INDEX_PREFIX', 'prefix');
 		putenv('environment=test');
 
-		$expected = 'prefix--owc-pdc--1--test';
+		$expected = 'prefix--www.google.com--1--test';
 		$actual = $this->service->setIndexNameByEnvironment($indexName, $siteID);
 
 		$this->assertEquals($expected, $actual);
