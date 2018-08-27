@@ -20,8 +20,6 @@ pipelines:
         deployment: production
         script:
           - apt-get update && apt-get install -y git openssh-server rsync
-          - curl ifconfig.co
-          - ssh -T webdev@web11.yard.nl
           - ssh webdev@web11.yard.nl mkdir -p /data/www/docs.openwebconcept.nl/htdocs/plugins/internal-products && rsync -avH ./docs* -e "ssh" webdev@web11.yard.nl:/data/www/docs.openwebconcept.nl/htdocs/plugins/internal-products
 
     # - step:
