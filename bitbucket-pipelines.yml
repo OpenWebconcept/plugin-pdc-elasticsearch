@@ -20,7 +20,7 @@ pipelines:
         deployment: production
         script:
           - apt-get update && apt-get install -y git openssh-server rsync
-          - ssh webdev@web11.yard.nl mkdir -p /data/www/docs.openwebconcept.nl/htdocs/plugins/elasticsearch && rsync -avH ./docs* -e "ssh" webdev@web11.yard.nl:/data/www/docs.openwebconcept.nl/htdocs/plugins/elasticsearch
+          - ssh webdev@web11.yard.nl mkdir -p /data/www/docs.openwebconcept.nl/htdocs/plugins/elasticsearch && rsync -avH ./docs/* -e "ssh" webdev@web11.yard.nl:/data/www/docs.openwebconcept.nl/htdocs/plugins/elasticsearch
 
     # - step:
     #     name: integration test
