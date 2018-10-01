@@ -1,0 +1,48 @@
+# Loco Gettext template
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PDC Elasticsearch\n"
+"POT-Creation-Date: 2018-10-01 22:19+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2014-MO-DA HO:MI+ZONE\n"
+"Language-Team: Yard Internet <info@yard.nl>\n"
+"X-Generator: Poedit 2.0.6\n"
+"X-Poedit-KeywordsList: __;_x;_e;_ex;_n;_nx;esc_attr__;esc_attr_e;esc_attr_x;esc_html__;esc_html_e;esc_html_x;_n_noop;_nx_noop\n"
+"X-Poedit-Basepath: ..\n"
+"Last-Translator: \n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: tests\n"
+"X-Poedit-SearchPathExcluded-1: docs\n"
+"X-Poedit-SearchPathExcluded-2: vendor\n"
+"X-Poedit-SearchPathExcluded-3: languages\n"
+
+#: config/settings.php:5 config/settings_pages.php:4
+msgid "Elasticsearch"
+msgstr ""
+
+#: config/settings.php:12
+msgid "Instance url (incl. http(s)://)"
+msgstr ""
+
+#: config/settings.php:13
+msgid "Should be different for every OTAP environment!"
+msgstr ""
+
+#: config/settings.php:18
+msgid "Instance shield"
+msgstr ""
+
+#: config/settings.php:19
+msgid "If applicable, use {username}:{password} notation."
+msgstr ""
+
+#: config/settings.php:24
+msgid "Instance prefix"
+msgstr ""
+
+#: config/settings.php:25
+msgid "This prefix is used to group multiple sources in ElasticSearch."
+msgstr ""
