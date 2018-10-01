@@ -1,0 +1,55 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PDC Elasticsearch\n"
+"POT-Creation-Date: 2018-10-01 22:20+0200\n"
+"PO-Revision-Date: 2018-10-01 22:22+0200\n"
+"Last-Translator: Edwin Siebel <edwin@yard.nl>\n"
+"Language-Team: Yard Internet <info@yard.nl>\n"
+"Language: nl_NL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 2.0.6\n"
+"X-Poedit-KeywordsList: __;_x;_e;_ex;_n;_nx;esc_attr__;esc_attr_e;esc_attr_x;"
+"esc_html__;esc_html_e;esc_html_x;_n_noop;_nx_noop\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: tests\n"
+"X-Poedit-SearchPathExcluded-1: docs\n"
+"X-Poedit-SearchPathExcluded-2: vendor\n"
+"X-Poedit-SearchPathExcluded-3: languages\n"
+
+#: config/settings.php:5 config/settings_pages.php:4
+msgid "Elasticsearch"
+msgstr "Elasticsearch"
+
+#: config/settings.php:12
+msgid "Instance url (incl. http(s)://)"
+msgstr "Instance url (incl. http(s)://)"
+
+#: config/settings.php:13
+msgid "Should be different for every OTAP environment!"
+msgstr "Moet anders zijn voor elke OTAP-omgeving!"
+
+#: config/settings.php:18
+msgid "Instance shield"
+msgstr "Instance shield"
+
+#: config/settings.php:19
+msgid "If applicable, use {username}:{password} notation."
+msgstr "Gebruik indien van toepassing de notatie {username}:{password}."
+
+#: config/settings.php:24
+msgid "Instance prefix"
+msgstr "Instance prefix"
+
+#: config/settings.php:25
+msgid "This prefix is used to group multiple sources in ElasticSearch."
+msgstr ""
+"Dit voorvoegsel wordt gebruikt om meerdere bronnen in ElasticSearch te "
+"groeperen."
+
+#~ msgid "This link does not work, go to our website: <a href=\"%s\">%s</a>"
+#~ msgstr "Deze link werkt niet, bekijk onze website: <a href=\"%s\">%s</a>"
