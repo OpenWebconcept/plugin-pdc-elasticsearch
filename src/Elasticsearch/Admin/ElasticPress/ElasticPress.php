@@ -50,9 +50,12 @@ class ElasticPress
     {
         $indexablesFromConfig = $this->config->get('elasticpress.indexables');
         add_filter(
-            'ep_indexable_post_types', function ($post_types) use ($indexablesFromConfig) {
+            'ep_indexable_post_types',
+            function ($post_types) use ($indexablesFromConfig) {
                 return $indexablesFromConfig;
-            }, 11, 1
+            },
+            11,
+            1
         );
     }
 
@@ -62,7 +65,8 @@ class ElasticPress
     public function setIndexPostsArgs()
     {
         add_filter(
-            'ep_index_posts_args', function ($args) {
+            'ep_index_posts_args',
+            function ($args) {
 
                 $args['meta_query'] = [
                 [
@@ -73,7 +77,9 @@ class ElasticPress
                 ];
 
                 return $args;
-            }, 10, 1
+            },
+            10,
+            1
         );
     }
 
@@ -85,9 +91,12 @@ class ElasticPress
     public function setStatuses()
     {
         add_filter(
-            'ep_indexable_post_status', function ($statuses) {
+            'ep_indexable_post_status',
+            function ($statuses) {
                 return ['publish'];
-            }, 11, 1
+            },
+            11,
+            1
         );
     }
 
@@ -100,9 +109,12 @@ class ElasticPress
     {
         $languageFromConfig = $this->config->get('elasticpress.language');
         add_filter(
-            'ep_analyzer_language', function ($language, $analyzer) use ($languageFromConfig) {
+            'ep_analyzer_language',
+            function ($language, $analyzer) use ($languageFromConfig) {
                 return $languageFromConfig;
-            }, 10, 2
+            },
+            10,
+            2
         );
     }
 
@@ -114,11 +126,14 @@ class ElasticPress
     public function setPostSyncArgs()
     {
         add_filter(
-            'ep_post_sync_args', function ($postArgs, $postID) {
+            'ep_post_sync_args',
+            function ($postArgs, $postID) {
                 $postArgs = $this->transform($postArgs, $postID);
 
                 return $postArgs;
-            }, 10, 2
+            },
+            10,
+            2
         );
     }
 
@@ -133,7 +148,7 @@ class ElasticPress
     protected function transform($postArgs, $postID): array
     {
         $postArgs['post_author'] = isset($postArgs['post_author']) ? $postArgs['post_author'] : '';
-        if (apply_filters('owc/pdc-elasticsearch/elasticpress/postargs/remote-author', true, $postID) ) {
+        if (apply_filters('owc/pdc-elasticsearch/elasticpress/postargs/remote-author', true, $postID)) {
             $postArgs['post_author']['raw'] = $postArgs['post_author']['display_name'] = $postArgs['post_author']['login'] = '';
         }
 
@@ -149,12 +164,10 @@ class ElasticPress
         ['taxonomy_id' => 'pdc-doelgroep']
         ];
         $collected_terms = [];
-        foreach ( $taxonomies_data as $taxonomy_data ) {
-
+        foreach ($taxonomies_data as $taxonomy_data) {
             $terms = wp_get_post_terms($postID, $taxonomy_data['taxonomy_id']);
-            if (! is_wp_error($terms) ) {
-
-                foreach ( $terms as $term ) {
+            if (! is_wp_error($terms)) {
+                foreach ($terms as $term) {
                     $collected_terms[] = $term->name;
                 }
             }
@@ -176,9 +189,8 @@ class ElasticPress
 
         $settings = $this->getSettings();
 
-        if (isset($settings['_owc_setting_elasticsearch_url']) && ( ! defined('EP_HOST') ) ) {
-
-            if (isset($settings['_owc_setting_elasticsearch_shield']) && ( ! defined('ES_SHIELD') ) ) {
+        if (isset($settings['_owc_setting_elasticsearch_url']) && ( ! defined('EP_HOST') )) {
+            if (isset($settings['_owc_setting_elasticsearch_shield']) && ( ! defined('ES_SHIELD') )) {
                 define('ES_SHIELD', $settings['_owc_setting_elasticsearch_shield']);
             }
 
@@ -194,7 +206,7 @@ class ElasticPress
             update_option('ep_host', EP_HOST);
         }
 
-        if (isset($settings['_owc_setting_elasticsearch_prefix']) && ( ! defined('EP_INDEX_PREFIX') ) ) {
+        if (isset($settings['_owc_setting_elasticsearch_prefix']) && ( ! defined('EP_INDEX_PREFIX') )) {
             define('EP_INDEX_PREFIX', $settings['_owc_setting_elasticsearch_prefix']);
         }
 
@@ -212,9 +224,9 @@ class ElasticPress
     public function setIndexNameByEnvironment($indexName, $siteID)
     {
         $siteUrl = pathinfo(get_site_url());
-		$siteBasename = $siteUrl['basename'];
+        $siteBasename = $siteUrl['basename'];
 
-        if (defined('EP_INDEX_PREFIX') && EP_INDEX_PREFIX ) {
+        if (defined('EP_INDEX_PREFIX') && EP_INDEX_PREFIX) {
             $siteBasename = EP_INDEX_PREFIX . '--' . $siteBasename;
         }
 
