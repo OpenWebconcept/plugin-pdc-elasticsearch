@@ -126,7 +126,7 @@ class ElasticPress
     public function setPostSyncArgs()
     {
         add_filter(
-            'ep_post_sync_args',
+            'ep_post_sync_args_post_prepare_meta',
             function ($postArgs, $postID) {
                 $postArgs = $this->transform($postArgs, $postID);
 
@@ -152,13 +152,13 @@ class ElasticPress
             $postArgs['post_author']['raw'] = $postArgs['post_author']['display_name'] = $postArgs['post_author']['login'] = '';
         }
 
-        $postArgs['post_meta'] = isset($postArgs['post_meta']) ? $postArgs['post_meta'] : [];
-        $postArgs['post_meta'] = apply_filters('owc/pdc-elasticsearch/elasticpress/postargs/meta', $postArgs['post_meta'], $postID);
+        $postArgs['meta'] = isset($postArgs['meta']) ? $postArgs['meta'] : [];
+        $postArgs['meta'] = apply_filters('owc/pdc-elasticsearch/elasticpress/postargs/meta', $postArgs['meta'], $postID);
 
         $postArgs['terms'] = isset($postArgs['terms']) ? $postArgs['terms'] : [];
         $postArgs['terms'] = apply_filters('owc/pdc-elasticsearch/elasticpress/postargs/terms', $postArgs['terms'], $postID);
 
-        //adding pdc-item taxonomies as 'post_meta.terms' field, filled with concatenated term names.
+        //adding pdc-item taxonomies as 'meta.terms' field, filled with concatenated term names.
         $taxonomies_data = [
         ['taxonomy_id' => 'pdc-type'],
         ['taxonomy_id' => 'pdc-doelgroep']
@@ -172,9 +172,9 @@ class ElasticPress
                 }
             }
         }
-        $postArgs['post_meta']['terms'] = implode(',', $collected_terms);
+        $postArgs['meta']['terms']['value'] = implode(',', $collected_terms);
 
-        $postArgs = apply_filters('owc/pdc-elasticsearch/elasticpress/postargs/all', $postArgs, $postID);
+		$postArgs = apply_filters('owc/pdc-elasticsearch/elasticpress/postargs/all', $postArgs, $postID);
 
         return $postArgs;
     }
