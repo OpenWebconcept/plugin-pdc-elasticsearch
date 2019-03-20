@@ -22,11 +22,6 @@ if (!defined('WPINC')) {
     die;
 }
 
-// Don't boot if base plugin is not active.
-if (!is_plugin_active('pdc-base/pdc-base.php')) {
-    return;
-}
-
 /**
  * manual loaded file: the autoloader.
  */
