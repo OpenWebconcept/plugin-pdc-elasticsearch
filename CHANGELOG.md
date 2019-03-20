@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 1.1.2
+### Fix:
+* Add: Replace initial dependency check with Dependency Checker from PDC Base
+
 ## Version 1.1.1
 
 ### Fix:
