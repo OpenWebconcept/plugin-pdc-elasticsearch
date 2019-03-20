@@ -3,7 +3,7 @@
  * Plugin Name:       PDC Elasticsearch
  * Plugin URI:        https://www.yardinternet.nl
  * Description:       PDC Elasticsearch
- * Version:           1.1.1
+ * Version:           1.1.2
  * Author:            Yard Internet
  * Author URI:        https://www.yardinternet.nl/
  * License:           GPL-3.0
@@ -20,11 +20,6 @@ use OWC\PDC\Elasticsearch\Foundation\Plugin;
  */
 if (!defined('WPINC')) {
     die;
-}
-
-// Don't boot if base plugin is not active.
-if (!is_plugin_active('pdc-base/pdc-base.php')) {
-    return;
 }
 
 /**

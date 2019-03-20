@@ -5,7 +5,7 @@ return [
     /**
      * Service Providers.
      */
-    'providers' => [
+    'providers'    => [
         /**
          * Global providers.
          */
@@ -15,7 +15,7 @@ return [
          * Providers specific to the admin.
          */
         'admin'    => [
-            OWC\PDC\Elasticsearch\Admin\Settings\SettingsServiceProvider::class
+            OWC\PDC\Elasticsearch\Admin\Settings\SettingsServiceProvider::class,
         ],
 
         /**
@@ -28,11 +28,33 @@ return [
         /**
          * Providers specific to the frontend.
          */
-        'frontend' => [
-
-        ]
+        'frontend' => [],
     ],
+    /**
+     * Dependencies upon which the plugin relies.
+     *
+     * Required: type, label
+     * Optional: message
+     *
+     * Type: plugin
+     * - Required: file
+     * - Optional: version
+     *
+     * Type: class
+     * - Required: name
+     */
     'dependencies' => [
-
-    ]
+        [
+            'type'    => 'plugin',
+            'label'   => 'OpenPDC Base',
+            'version' => '2.1.5',
+            'file'    => 'pdc-base/pdc-base.php',
+        ],
+        [
+            'type'    => 'plugin',
+            'label'   => 'ElasticPress',
+            'version' => '2.8.1',
+            'file'    => 'elasticpress/elasticpress.php',
+        ],
+    ],
 ];
