@@ -17,7 +17,7 @@
   ],
   "require": {
     "php": ">=7.0",
-    "plugin/pdc-base": "^2.0.0"
+    "plugin/pdc-base": "^3.0.0"
   },
   "require-dev": {
     "mockery/mockery": "1.0.*",

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Plugin Name:       PDC Elasticsearch
  * Plugin URI:        https://www.yardinternet.nl
  * Description:       PDC Elasticsearch
- * Version:           1.1.2
+ * Version:           1.1.3
  * Author:            Yard Internet
  * Author URI:        https://www.yardinternet.nl/
  * License:           GPL-3.0

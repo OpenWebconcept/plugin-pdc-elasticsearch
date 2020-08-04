@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The base of the plugin.
  */
@@ -26,5 +27,5 @@ class Plugin extends BasePlugin
      *
      * @const string VERSION
      */
-    const VERSION = '1.1.2';
+    const VERSION = '1.1.3';
 }
