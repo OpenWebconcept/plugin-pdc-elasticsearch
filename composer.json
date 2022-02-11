@@ -1,13 +1,12 @@
 {
   "name": "plugin/pdc-elasticsearch",
   "description": "PDC Elasticsearch plugin",
-  "authors": [
-    {
-      "name": "Yard Internet",
-      "email": "info@yard.nl",
-      "homepage": "https://www.yardinternet.nl"
-    }
-  ],
+  "homepage": "https://www.yard.nl",
+  "authors": [{
+    "name": "Yard | Digital Agency",
+   "email": "info@yard.nl",
+    "homepage": "https://www.yard.nl"
+  }],
   "type": "wordpress-plugin",
   "repositories": [
     {
@@ -16,32 +15,34 @@
     }
   ],
   "require": {
-    "php": ">=7.0",
+    "php": ">=7.2",
     "plugin/pdc-base": "^3.0.0"
   },
   "require-dev": {
-    "mockery/mockery": "1.0.*",
-    "phpunit/phpunit": "~7.0",
     "10up/wp_mock": "dev-master",
-    "phpdocumentor/phpdocumentor": "2.*",
-    "squizlabs/php_codesniffer": "^3.0.2"
+    "friendsofphp/php-cs-fixer": "^3.0",
+    "mockery/mockery": "^1.0",
+    "phpunit/phpunit": "^8.0 | ^9.0",
+    "symfony/var-dumper": "^5.0",
+    "szepeviktor/phpstan-wordpress": "^1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "OWC\\PDC\\Elasticsearch\\": "./src/Elasticsearch"
+    }
   },
   "autoload-dev": {
     "psr-4": {
-      "OWC\\PDC\\Elasticsearch\\": "./src/Elasticsearch",
       "OWC\\PDC\\Elasticsearch\\Tests\\": "./tests"
     }
   },
   "scripts": {
-    "unit": "clear && ./vendor/bin/phpunit  --testsuite 'Unit Test Suite' --colors=always",
-    "unit-coverage": "clear && ./vendor/bin/phpunit  --testsuite 'Unit Test Suite' --colors=always --coverage-html ./tests/coverage",
-    "integration": "clear && ./vendor/bin/phpunit  --testsuite 'Integration Test Suite' --colors=always",
+    "format": "./vendor/bin/php-cs-fixer fix",
+    "phpstan": "./vendor/bin/phpstan analyse",
     "test": [
-      "@unit",
-      "@integration"
+      "@unit"
     ],
-    "cs": "./vendor/bin/phpcs",
-    "csfix": "./vendor/bin/phpcbf",
-    "docs": "./vendor/bin/phpdoc -d ./src/Elasticsearch -t ./docs"
+    "unit": "clear && ./vendor/bin/phpunit --colors=always",
+    "unit-coverage": "clear && XDEBUG_MODE=coverage ./vendor/bin/phpunit --stderr --colors=always"
   }
 }

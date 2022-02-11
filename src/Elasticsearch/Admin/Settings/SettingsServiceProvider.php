@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Provider to register the settings in the admin.
  */

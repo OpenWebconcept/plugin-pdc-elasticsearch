@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Provider which registers the ElasticPress specific settings.
  */
