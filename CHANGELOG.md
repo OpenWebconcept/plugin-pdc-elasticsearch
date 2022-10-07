@@ -1,3 +1,9 @@
+## Version 1.1.4
+
+### Chore
+
+-   Update dependencies + reference pdc-base plugin from BitBucket to GitHub
+
 # CHANGELOG
 
 ## Version 1.1.3

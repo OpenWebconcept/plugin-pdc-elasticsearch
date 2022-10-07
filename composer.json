@@ -12,7 +12,7 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "git@bitbucket.org:openwebconcept/plugin-pdc-base.git"
+      "url": "git@github.com:OpenWebconcept/plugin-pdc-base.git"
     }
   ],
   "require": {
@@ -22,7 +22,7 @@
   "require-dev": {
     "mockery/mockery": "1.0.*",
     "phpunit/phpunit": "~7.0",
-    "10up/wp_mock": "dev-master",
+    "10up/wp_mock": "~0.4",
     "phpdocumentor/phpdocumentor": "2.*",
     "squizlabs/php_codesniffer": "^3.0.2"
   },
