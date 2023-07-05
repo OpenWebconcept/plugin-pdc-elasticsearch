@@ -1,10 +1,16 @@
+# CHANGELOG
+
+## Version 1.1.5
+
+### Refactor
+
+-   Don't require the pdc-base plugin in composer.json
+
 ## Version 1.1.4
 
 ### Chore
 
 -   Update dependencies + reference pdc-base plugin from BitBucket to GitHub
-
-# CHANGELOG
 
 ## Version 1.1.3
 

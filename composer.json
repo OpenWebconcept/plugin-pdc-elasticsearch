@@ -9,15 +9,9 @@
     }
   ],
   "type": "wordpress-plugin",
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "git@github.com:OpenWebconcept/plugin-pdc-base.git"
-    }
-  ],
+  "repositories": [],
   "require": {
-    "php": ">=7.0",
-    "plugin/pdc-base": "^3.0.0"
+    "php": ">=7.0"
   },
   "require-dev": {
     "mockery/mockery": "1.0.*",
